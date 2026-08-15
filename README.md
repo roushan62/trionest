@@ -20,17 +20,35 @@ plain static files with no Node server, no database and no serverless functions.
 npm run build            # build the static site into dist/ (minifies CSS too)
 npm run serve            # build + preview at http://localhost:4321
 npm run check            # build + run the QA checker (links | alt | meta | schema | headings | webp)
+npm run smoke            # build + DOM smoke test of the JS enhancement layer (jsdom)
 npm run prepare-images   # resize + recompress JPEGs and generate WebP twins (needs ImageMagick)
 npm run logos            # render SVG client logos to PNG previews in tmp/ for review
 npm run images           # regenerate brand assets and photo placeholders
+bash tools/import-logos.sh  # re-import real client logos from image-search/ into src/assets/clients/
 ```
 
 Requires Node 18+. `npm run images` additionally needs Python 3 with Pillow
 (`pip install pillow`) — you only need it if you want to regenerate placeholders.
 
-There are **no npm dependencies to install**. `npm run build` works on a clean checkout.
+There are **no npm dependencies to install** for the build itself. `npm run build` works on a
+clean checkout. `npm run smoke` needs the `jsdom` devDependency (`npm i`).
 
 ---
+
+## Redesign layer (v1.2)
+
+* **Real client logos** — official brand logos for all 22 published clients, imported from
+  brand sources via `tools/import-logos.sh` into `src/assets/clients/*.webp`
+  (Fleetx and Centrum keep the rendered SVG wordmark where no clean source was available).
+* **Client-office showcase** — a homepage section pairing each delivered space with the
+  client's real logo, AI-generated interior visual (styled per brand, referenced from the
+  site's real photography) and the verified project cities.
+* **Motion system** — scroll-reveal with stagger, animated stat counters, seamless logo
+  marquee, hero ticker, scroll progress bar, cursor glow, card tilt and back-to-top — all
+  vanilla JS/CSS, GPU-friendly, and disabled under `prefers-reduced-motion`.
+* **New environments imagery** — six generated corporate interior scenes (reception,
+  workstations, boardroom, cafe, cabin, training room) used on the About page and the
+  Civil & Interiors service page.
 
 ## Repository layout
 

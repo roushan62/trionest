@@ -10,6 +10,7 @@ import {
   testimonialSection,
   projectCard,
   enquiryForm,
+  clientOffices,
   img,
 } from '../lib/parts.mjs';
 
@@ -94,19 +95,31 @@ const body = `
     h: 1250,
     eager: true,
   })}</div>
+  <div class="hero__orb hero__orb--a" aria-hidden="true"></div>
+  <div class="hero__orb hero__orb--b" aria-hidden="true"></div>
   <div class="wrap hero__inner">
-    <span class="kicker">Corporate Interiors · Electrical · HVAC</span>
-    <h1>One partner. Three <em>disciplines</em>.</h1>
-    <p class="hero__sub">Design-driven corporate interiors, end-to-end electrical contracting and PMBOK-led HVAC engineering — delivered as a single, accountable handover.</p>
-    <div class="hero__cta">
+    <span class="kicker" data-reveal style="--rd:0ms">Corporate Interiors · Electrical · HVAC</span>
+    <h1 data-reveal style="--rd:80ms">One partner. Three <em>disciplines</em>.</h1>
+    <p class="hero__sub" data-reveal style="--rd:160ms">Design-driven corporate interiors, end-to-end electrical contracting and PMBOK-led HVAC engineering — delivered as a single, accountable handover.</p>
+    <div class="hero__cta" data-reveal style="--rd:240ms">
       <a class="btn btn--accent btn--lg" href="/contact/">Start your project ${icon('arrow')}</a>
       <a class="btn btn--ghost btn--lg" href="/projects/">See our projects</a>
     </div>
-    <ul class="hero__pills">
+    <ul class="hero__pills" data-reveal style="--rd:320ms">
       <li class="pill">${icon('layers')} Civil &amp; Interiors</li>
       <li class="pill">${icon('bolt')} Electrical</li>
       <li class="pill">${icon('wind')} HVAC</li>
     </ul>
+  </div>
+  <div class="hero__ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <span>One partner</span><i></i><span>One contract</span><i></i><span>One handover</span><i></i>
+      <span>Delhi-NCR</span><i></i><span>Lucknow</span><i></i><span>Patna</span><i></i>
+      <span>Kolkata</span><i></i><span>Gwalior</span><i></i><span>Jabalpur</span><i></i><span>Mehsana</span><i></i>
+      <span>One partner</span><i></i><span>One contract</span><i></i><span>One handover</span><i></i>
+      <span>Delhi-NCR</span><i></i><span>Lucknow</span><i></i><span>Patna</span><i></i>
+      <span>Kolkata</span><i></i><span>Gwalior</span><i></i><span>Jabalpur</span><i></i><span>Mehsana</span><i></i>
+    </div>
   </div>
 </section>
 
@@ -184,6 +197,8 @@ ${processStrip()}
     <p class="mt-2"><a class="tlink" href="/projects/">View all projects ${icon('arrow')}</a></p>
   </div>
 </section>
+
+${clientOffices()}
 
 ${testimonialSection('Client feedback')}
 

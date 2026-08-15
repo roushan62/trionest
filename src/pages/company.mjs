@@ -75,6 +75,18 @@ ${statBar()}
   </div>
 </div></section>
 
+<section class="sec sec--alt"><div class="wrap">
+  <div class="sec__head sec__head--split">
+    <div><span class="kicker">The environments we build</span><h2>Every floor we hand over feels <em>like this.</em></h2></div>
+    <p>Reception, workspace, boardroom, cafe, cabin and training floor — each environment is drawn, built and snagged to the same documented standard.</p>
+  </div>
+  <div class="gallery">
+    <figure>${img('/assets/img/office-reception.jpg', 'Corporate reception lobby delivered by TrioNest Spaces', { w: 800, h: 600 })}<figcaption>Receptions — the brand's first impression</figcaption></figure>
+    <figure>${img('/assets/img/office-boardroom.jpg', 'Executive boardroom delivered by TrioNest Spaces', { w: 800, h: 600 })}<figcaption>Boardrooms — acoustically treated, AV-ready</figcaption></figure>
+    <figure>${img('/assets/img/office-cafe.jpg', 'Office cafeteria and breakout delivered by TrioNest Spaces', { w: 800, h: 600 })}<figcaption>Breakouts — where the floor actually meets</figcaption></figure>
+  </div>
+</div></section>
+
 <section class="sec"><div class="wrap">
   <div class="sec__head"><span class="kicker">Why clients choose us</span><h2>Six commitments, and what each one actually means.</h2></div>
   <div class="grid grid--2">

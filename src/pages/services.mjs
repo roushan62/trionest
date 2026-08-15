@@ -147,6 +147,24 @@ export const servicePage = (s) => {
   </div>
 </div></section>
 
+${
+  s.gallery
+    ? `<section class="sec sec--alt"><div class="wrap">
+  <div class="sec__head sec__head--split">
+    <div><span class="kicker">Environments</span><h2>The spaces a ${esc(s.title.toLowerCase())} scope delivers.</h2></div>
+    <p>From reception to the last workstation — every environment in the programme is designed, drawn, built and snagged to the same standard.</p>
+  </div>
+  <div class="gallery">
+    ${s.gallery
+      .map(
+        (g) => `<figure>${img(`/assets/img/${g.img}.jpg`, g.caption, { w: 800, h: 600 })}<figcaption>${esc(g.caption)}</figcaption></figure>`,
+      )
+      .join('')}
+  </div>
+</div></section>`
+    : ''
+}
+
 <section class="sec sec--deep"><div class="wrap">
   <div class="sec__head sec__head--split">
     <div><span class="kicker">Delivery</span><h2>Our process for ${esc(s.title.toLowerCase())}.</h2></div>

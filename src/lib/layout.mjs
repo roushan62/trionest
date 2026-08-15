@@ -232,6 +232,7 @@ export function page({
 <html lang="en-IN">
 <head>
 <meta charset="utf-8">
+<script>document.documentElement.classList.add('js');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
