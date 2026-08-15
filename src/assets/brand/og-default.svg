@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#08090b"/>
+  <rect x="0" y="0" width="1200" height="6" fill="#d98a3d"/>
+  <g transform="translate(80,90)">
+    <path d="M30 0 60 52H0z" fill="none" stroke="#d98a3d" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M30 20 43 44H17z" fill="#d98a3d"/>
+  </g>
+  <text x="160" y="128" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="40" font-weight="700" fill="#f4f5f6">TrioNest Spaces</text>
+  <text x="80" y="300" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="84" font-weight="700" fill="#f4f5f6">One Partner.</text>
+  <text x="80" y="396" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="84" font-weight="700" fill="#d98a3d">Three Disciplines.</text>
+  <text x="80" y="470" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="30" fill="#b9bfc6">Corporate Interiors · Electrical Contracting · HVAC Engineering</text>
+  <text x="80" y="556" font-family="Segoe UI,Helvetica,Arial,sans-serif" font-size="25" fill="#878f98">100+ projects delivered · PAN-India · trionest.in</text>
+</svg>

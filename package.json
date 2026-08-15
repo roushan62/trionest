@@ -1,0 +1,20 @@
+{
+  "name": "trionest-spaces",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TrioNest Spaces — static corporate website (HTML/CSS/vanilla JS, zero runtime dependencies)",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "images": "python3 tools/gen-images.py",
+    "serve": "node build.mjs && node tools/serve.mjs",
+    "dev": "node tools/serve.mjs",
+    "check": "node build.mjs && node tools/check.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}
