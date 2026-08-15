@@ -1,12 +1,23 @@
-/* TrioNest Spaces — progressive enhancement only. No dependencies. */
+/* TrioNest Spaces — progressive enhancement only. No dependencies. Optimised. */
 (function () {
   'use strict';
 
-  /* ---------------- mobile nav ---------------- */
+  /* ---------- passive event support detection ---------- */
+  var supportsPassive = false;
+  try {
+    var opts = Object.defineProperty({}, 'passive', { get: function () { supportsPassive = true; return true; } });
+    window.addEventListener('_test', null, opts);
+    window.removeEventListener('_test', null, opts);
+  } catch (e) {}
+  var passiveArg = supportsPassive ? { passive: true } : false;
+
+  /* ---------- mobile nav ---------- */
   var burger = document.querySelector('.burger');
   var nav = document.getElementById('nav');
 
   if (burger && nav) {
+    var desktopMQ = window.matchMedia('(min-width: 1100px)');
+
     burger.addEventListener('click', function () {
       var open = nav.classList.toggle('is-open');
       burger.setAttribute('aria-expanded', String(open));
@@ -17,7 +28,7 @@
     nav.addEventListener('click', function (e) {
       var t = e.target.closest('.nav__toggle');
       if (!t) return;
-      if (window.matchMedia('(min-width: 1100px)').matches) return;
+      if (desktopMQ.matches) return;
       e.preventDefault();
       var open = t.getAttribute('aria-expanded') === 'true';
       t.setAttribute('aria-expanded', String(!open));
@@ -27,21 +38,34 @@
       if (e.key === 'Escape' && nav.classList.contains('is-open')) {
         nav.classList.remove('is-open');
         burger.setAttribute('aria-expanded', 'false');
+        burger.setAttribute('aria-label', 'Open menu');
         document.body.classList.remove('nav-open');
         burger.focus();
       }
     });
 
-    window.addEventListener('resize', function () {
-      if (window.matchMedia('(min-width: 1100px)').matches && nav.classList.contains('is-open')) {
+    /* Close nav on resize to desktop */
+    desktopMQ.addEventListener('change', function (e) {
+      if (e.matches && nav.classList.contains('is-open')) {
         nav.classList.remove('is-open');
         burger.setAttribute('aria-expanded', 'false');
+        burger.setAttribute('aria-label', 'Open menu');
         document.body.classList.remove('nav-open');
       }
     });
+
+    /* Close nav when clicking outside on mobile */
+    document.addEventListener('click', function (e) {
+      if (nav.classList.contains('is-open') && !nav.contains(e.target) && !burger.contains(e.target)) {
+        nav.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+        burger.setAttribute('aria-label', 'Open menu');
+        document.body.classList.remove('nav-open');
+      }
+    }, passiveArg);
   }
 
-  /* ---------------- project filters ---------------- */
+  /* ---------- project filters ---------- */
   var pgrid = document.getElementById('project-grid');
   if (pgrid) {
     var selSector = document.getElementById('f-sector');
@@ -57,28 +81,33 @@
       return raw.split('|').indexOf(value) !== -1;
     }
 
+    var rafId = 0;
     function apply() {
-      var s = selSector ? selSector.value : '';
-      var v = selVertical ? selVertical.value : '';
-      var c = selCity ? selCity.value : '';
-      var shown = 0;
-      cards.forEach(function (card) {
-        var ok = match(card, 'sector', s) && match(card, 'vertical', v) && match(card, 'city', c);
-        card.hidden = !ok;
-        if (ok) shown++;
-      });
-      if (countEl) {
-        countEl.textContent =
-          shown + (shown === 1 ? ' project' : ' projects') + ' matching your filters';
-      }
-      if (empty) empty.hidden = shown !== 0;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(function () {
+        rafId = 0;
+        var s = selSector ? selSector.value : '';
+        var v = selVertical ? selVertical.value : '';
+        var c = selCity ? selCity.value : '';
+        var shown = 0;
+        for (var i = 0; i < cards.length; i++) {
+          var card = cards[i];
+          var ok = match(card, 'sector', s) && match(card, 'vertical', v) && match(card, 'city', c);
+          card.hidden = !ok;
+          if (ok) shown++;
+        }
+        if (countEl) {
+          countEl.textContent = shown + (shown === 1 ? ' project' : ' projects') + ' matching your filters';
+        }
+        if (empty) empty.hidden = shown !== 0;
 
-      var params = new URLSearchParams();
-      if (s) params.set('sector', s);
-      if (v) params.set('vertical', v);
-      if (c) params.set('city', c);
-      var qs = params.toString();
-      history.replaceState(null, '', qs ? '?' + qs : location.pathname);
+        var params = new URLSearchParams();
+        if (s) params.set('sector', s);
+        if (v) params.set('vertical', v);
+        if (c) params.set('city', c);
+        var qs = params.toString();
+        history.replaceState(null, '', qs ? '?' + qs : location.pathname);
+      });
     }
 
     [selSector, selVertical, selCity].forEach(function (el) {
@@ -93,7 +122,7 @@
       });
     }
 
-    // hydrate from query string (?vertical=HVAC etc.)
+    /* hydrate from query string (?vertical=HVAC etc.) */
     var q = new URLSearchParams(location.search);
     ['sector', 'vertical', 'city'].forEach(function (k) {
       var el = document.getElementById('f-' + k);
@@ -106,7 +135,7 @@
     apply();
   }
 
-  /* ---------------- testimonial carousel ---------------- */
+  /* ---------- testimonial carousel ---------- */
   document.querySelectorAll('[data-carousel]').forEach(function (root) {
     var track = root.querySelector('.carousel__track');
     var prev = root.querySelector('[data-car-prev]');
@@ -120,7 +149,7 @@
     if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
   });
 
-  /* ---------------- forms (static-host friendly) ---------------- */
+  /* ---------- forms (static-host friendly) ---------- */
   document.querySelectorAll('form[data-form]').forEach(function (form) {
     var status = form.querySelector('.form__status');
     var submit = form.querySelector('[type="submit"]');
@@ -136,7 +165,7 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      // honeypot
+      /* honeypot */
       var hp = form.querySelector('input[name="_gotcha"]');
       if (hp && hp.value) return;
 
@@ -148,7 +177,7 @@
       var data = new FormData(form);
 
       if (!configured) {
-        // No form service configured yet: fall back to a pre-filled email so no lead is lost.
+        /* No form service configured yet: fall back to a pre-filled email so no lead is lost. */
         var lines = [];
         data.forEach(function (v, k) {
           if (k.charAt(0) === '_' || !String(v).trim()) return;
@@ -161,13 +190,13 @@
         return;
       }
 
-      if (submit) { submit.disabled = true; submit.dataset.label = submit.textContent; submit.textContent = 'Sending…'; }
+      if (submit) { submit.disabled = true; submit.dataset.label = submit.textContent; submit.textContent = 'Sending\u2026'; }
 
       fetch(action, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
         .then(function (res) {
           if (!res.ok) throw new Error('bad status');
           form.reset();
-          say('Thank you. Your enquiry has been received — we typically respond within one working day.', true);
+          say('Thank you. Your enquiry has been received \u2014 we typically respond within one working day.', true);
         })
         .catch(function () {
           say('We could not send that. Please email spaces@trionest.in or call +91 93195 74674.', false);
@@ -178,8 +207,63 @@
     });
   });
 
-  /* ---------------- current year ---------------- */
+  /* ---------- smooth scroll for anchor links ---------- */
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    var id = link.getAttribute('href');
+    if (id === '#' || id.length < 2) return;
+    link.addEventListener('click', function (e) {
+      var target = document.querySelector(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  /* ---------- current year ---------- */
   document.querySelectorAll('[data-year]').forEach(function (el) {
     el.textContent = String(new Date().getFullYear());
   });
+
+  /* ---------- lazy image reveal (IntersectionObserver) ---------- */
+  if ('IntersectionObserver' in window) {
+    var imgObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var img = entry.target;
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+          }
+          imgObs.unobserve(img);
+        }
+      });
+    }, { rootMargin: '200px 0px' });
+
+    document.querySelectorAll('img[data-src]').forEach(function (img) {
+      imgObs.observe(img);
+    });
+  }
+
+  /* ---------- header scroll shadow ---------- */
+  var head = document.getElementById('head');
+  if (head) {
+    var lastScroll = 0;
+    var ticking = false;
+    function onScroll() {
+      lastScroll = window.scrollY;
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          ticking = false;
+          if (lastScroll > 10) {
+            head.style.boxShadow = '0 4px 24px rgba(0,0,0,.35)';
+          } else {
+            head.style.boxShadow = 'none';
+          }
+        });
+        ticking = true;
+      }
+    }
+    window.addEventListener('scroll', onScroll, passiveArg);
+  }
 })();

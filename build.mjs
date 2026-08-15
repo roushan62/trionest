@@ -29,6 +29,20 @@ mkdirSync(DIST, { recursive: true });
 
 const written = [];
 
+/* ---------- simple HTML minifier (no external deps) ---------- */
+function minifyHTML(html) {
+  return html
+    // Remove HTML comments (but keep conditional comments)
+    .replace(/<!--(?!\[if).*?-->/gs, '')
+    // Collapse whitespace between tags
+    .replace(/>\s+</g, '><')
+    // Remove extra whitespace
+    .replace(/\s{2,}/g, ' ')
+    // Remove whitespace around tags
+    .replace(/\s*(<\/?(?:div|section|article|header|footer|main|nav|ul|ol|li|p|head|body|html)[^>]*>)\s*/g, '$1')
+    .trim();
+}
+
 function write(routePath, html) {
   // '/' -> index.html ; '/about/' -> about/index.html ; '/404.html' -> 404.html
   let rel;
@@ -37,7 +51,7 @@ function write(routePath, html) {
   else rel = routePath.replace(/^\//, '').replace(/\/$/, '') + '/index.html';
   const out = join(DIST, rel);
   mkdirSync(dirname(out), { recursive: true });
-  writeFileSync(out, html);
+  writeFileSync(out, minifyHTML(html));
   written.push(routePath);
 }
 
@@ -87,11 +101,9 @@ const urls = written
 writeFileSync(
   join(DIST, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.w3.org/1999/xhtml/sitemap/0.9" xmlns:x="x">
-</urlset>`.replace(
-    /<urlset[\s\S]*<\/urlset>/,
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`,
-  ),
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`,
 );
 
 writeFileSync(
@@ -109,35 +121,149 @@ writeFileSync(join(DIST, '.nojekyll'), '');
 /* Hostinger/Apache: pretty URLs, 404 page, light caching */
 writeFileSync(
   join(DIST, '.htaccess'),
-  `# TrioNest Spaces — static hosting config (Apache / Hostinger)
+  `# TrioNest Spaces — Hostinger/Apache hosting config
+# Performance optimised: compression, caching, security headers
+
+# ---------- Error pages ----------
 ErrorDocument 404 /404.html
 
+# ---------- Prevent directory listing ----------
+Options -Indexes
+
+# ---------- Prevent access to hidden files ----------
+<FilesMatch "^\\.">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+<FilesMatch "^\\.htaccess">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
+# ---------- Pretty URLs ----------
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  RewriteBase /
+
+  # Force HTTPS (uncomment when SSL is active)
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Force www (uncomment if needed)
+  # RewriteCond %{HTTP_HOST} !^www\\. [NC]
+  # RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [L,R=301]
+
   # Serve /path as /path/index.html without a redirect loop
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME}/index.html -f
   RewriteRule ^(.*)$ /$1/index.html [L]
+
+  # Remove trailing slash from non-directory URLs
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)/$ /$1 [L,R=301]
 </IfModule>
 
+# ---------- Gzip/Brotli compression ----------
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml application/json
+  # Compress HTML, CSS, JavaScript, SVG, JSON, XML
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE text/plain
+
+  # Remove browser bugs
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\\.0[678] no-gzip
+  BrowserMatch \\bMSIE !no-gzip !gzip-only-text/html
 </IfModule>
 
+# ---------- Browser caching ----------
 <IfModule mod_expires.c>
   ExpiresActive On
+
+  # HTML: short cache
+  ExpiresByType text/html "access plus 1 hour"
+
+  # CSS & JavaScript: long cache (hashed filenames would allow longer)
   ExpiresByType text/css "access plus 1 year"
   ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+
+  # Images: long cache
   ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/jpg "access plus 1 year"
   ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
   ExpiresByType image/svg+xml "access plus 1 year"
-  ExpiresByType text/html "access plus 1 hour"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType image/vnd.microsoft.icon "access plus 1 year"
+
+  # Fonts: long cache
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+
+  # XML and TXT
+  ExpiresByType application/xml "access plus 1 week"
+  ExpiresByType text/xml "access plus 1 week"
+  ExpiresByType text/plain "access plus 1 week"
 </IfModule>
 
+# ---------- Cache-Control headers for static assets ----------
 <IfModule mod_headers.c>
+  <FilesMatch "\\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\\.(woff2|woff|ttf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\\.(html|htm)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+
+  # ---------- Security headers ----------
   Header set X-Content-Type-Options "nosniff"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+  # Remove server signature
+  Header unset X-Powered-By
+  Header unset Server
+</IfModule>
+
+# ---------- Prevent MIME type sniffing ----------
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+  AddType text/css .css
+  AddType image/svg+xml .svg
+  AddType font/woff2 .woff2
+  AddType font/woff .woff
+</IfModule>
+
+# ---------- Default charset ----------
+AddDefaultCharset UTF-8
+
+# ---------- Prevent hotlinking of images ----------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_REFERER} !^$
+  RewriteCond %{HTTP_REFERER} !^https?://(www\\.)?trionest\\.in [NC]
+  RewriteCond %{HTTP_REFERER} !^https?://(www\\.)?localhost [NC]
+  RewriteRule \\.(jpg|jpeg|png|gif|webp|svg)$ - [F,NC,L]
 </IfModule>
 `,
 );
