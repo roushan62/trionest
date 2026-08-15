@@ -1,5 +1,23 @@
 # Deployment
 
+## Vercel
+
+`vercel.json` in the repo root configures everything, so no dashboard settings
+are required:
+
+- `buildCommand: npm run build` → runs `node build.mjs`
+- `outputDirectory: dist` → tells Vercel where the static output lives
+  (without this Vercel looks for a `public/` folder and fails with
+  *"No Output Directory named 'public' found after the Build completed"*)
+- `trailingSlash: true` → matches the generated `/about/index.html` structure
+  and the canonical URLs / sitemap
+- long-lived cache headers for `/assets/*`, no-cache for HTML, plus basic
+  security headers
+
+If the project was previously created with an explicit **Output Directory** in
+**Project Settings → Build & Development Settings**, clear that override (or set
+it to `dist`) so `vercel.json` takes effect.
+
 ## GitHub Pages
 
 The workflow file is kept here because the connected GitHub App cannot push files
