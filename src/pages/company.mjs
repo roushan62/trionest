@@ -3,7 +3,7 @@ import { site, whyReasons, processStages } from '../data/site.mjs';
 import { services } from '../data/services.mjs';
 import { projects } from '../data/projects.mjs';
 import { clientGroups, allClients, testimonials } from '../data/clients.mjs';
-import { statBar, logoStrip, testimonialSection, enquiryForm, img, projectCard } from '../lib/parts.mjs';
+import { statBar, logoStrip, testimonialSection, enquiryForm, img, projectCard, clientLogo } from '../lib/parts.mjs';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -133,6 +133,13 @@ export const process = page({
   </div>
 </div></section>
 
+<section class="sec sec--tight"><div class="wrap">
+  <figure class="mbanner">
+    ${img('/assets/img/process.jpg', 'TrioNest engineers reviewing coordinated drawings on a live fit-out site', { w: 1408, h: 768, eager: true })}
+    <figcaption>Stage 2 in real life — the MEP coordination review that resolves services clashes on paper before they reach the site.</figcaption>
+  </figure>
+</div></section>
+
 <section class="sec"><div class="wrap">
   <div class="timeline">
     ${processStages
@@ -187,6 +194,10 @@ export const qualitySafety = page({
 <section class="sec"><div class="wrap">
   <div class="sec__head"><span class="kicker">Quality control</span><h2>Seven control points between drawing and handover.</h2>
   <p>Each control point is a hold: work does not proceed past it until the record is signed.</p></div>
+  <figure class="mbanner mb-2">
+    ${img('/assets/img/quality.jpg', 'QC engineer with checklist inspecting services above the ceiling before closure', { w: 1408, h: 768 })}
+    <figcaption>Stage-wise inspection in progress — services above the ceiling checked against the coordination drawing before closure.</figcaption>
+  </figure>
   <div class="grid grid--3">
     <div class="cell"><span class="cell__n">01</span><h3>Material inspection</h3><p>Every delivery checked against the approved specification, quantity and condition, and recorded on a Material Inspection Request (MIR). Non-conforming material is rejected at the gate, not discovered at installation.</p></div>
     <div class="cell"><span class="cell__n">02</span><h3>Mock-up approval</h3><p>For repeated elements — workstation clusters, partition systems, ceiling details, typical joinery — a physical mock-up is built and approved before bulk production, so a detail error is caught once rather than a hundred times.</p></div>
@@ -215,6 +226,10 @@ export const qualitySafety = page({
 <section class="sec sec--deep"><div class="wrap">
   <div class="sec__head"><span class="kicker">Health, safety &amp; environment</span><h2>What we enforce on site, every day.</h2>
   <p>Fit-out sites combine wet trades, work at height, hot works and partially energised systems, often inside an occupied building. Our HSE regime is built around that reality.</p></div>
+  <figure class="mbanner mb-2">
+    ${img('/assets/img/safety.jpg', 'Morning toolbox talk with site workers in full PPE on a TrioNest fit-out site', { w: 1408, h: 768 })}
+    <figcaption>The daily toolbox talk — attendance recorded before work starts, every crew, every site, every day.</figcaption>
+  </figure>
   <div class="grid grid--3">
     <div class="cell"><div class="cell__ico">${icon('shield')}</div><h3>Safety induction</h3><p>No worker enters the site without an induction covering the site layout, hazards, emergency routes, assembly point and reporting lines. Induction is recorded and re-run for every new crew.</p></div>
     <div class="cell"><div class="cell__ico">${icon('check')}</div><h3>PPE compliance</h3><p>Helmet, safety shoes, high-visibility vest and task-specific PPE — gloves, eye protection, full-body harness, insulated tools — enforced as a condition of site access, checked at entry and during daily inspections.</p></div>
@@ -337,6 +352,13 @@ export const team = page({
   <p class="lede">Each vertical is owned by a lead who signs off drawings, material approvals and testing for that trade. The project manager coordinates the programme; the vertical head owns the engineering.</p>
 </div></section>
 
+<section class="sec sec--tight"><div class="wrap">
+  <figure class="mbanner">
+    ${img('/assets/img/team.jpg', 'The TrioNest Spaces project team on a completed office floor', { w: 1408, h: 768 })}
+    <figcaption>The delivery team on a recently handed-over floor — the same people from survey to snag closure.</figcaption>
+  </figure>
+</div></section>
+
 <section class="sec"><div class="wrap">
   <div class="split split--60">
     <div class="prose">
@@ -417,7 +439,7 @@ ${statBar()}
     <h2 style="font-size:1.15rem;margin-bottom:1rem">${esc(g.sector)}</h2>
     <div class="logos__grid">
       ${g.clients
-        .map((c) => `<div class="logos__cell"><span>${esc(c.name)}</span></div>`)
+        .map((c) => `<div class="logos__cell" title="${esc(c.name)}">${clientLogo(c)}</div>`)
         .join('')}
     </div>
   </div>`,

@@ -1,4 +1,7 @@
-/* Client names already public on trionest.in. No additions without written permission. */
+/* Client names already public on trionest.in. No additions without written permission.
+   Logos: brand-accurate SVG wordmarks live in src/assets/clients/<logo>.svg, rendered
+   by parts.mjs (clientLogo) on the home strip and /clients/. Replace with the client's
+   official vector file when available; confirm usage rights before launch. */
 
 export const clientGroups = [
   {

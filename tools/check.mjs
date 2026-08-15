@@ -69,6 +69,11 @@ for (const f of htmlFiles) {
     if (!existsSync(join(ROOT, m[1]))) errors.push(`${page}: missing asset ${m[1]}`);
   }
 
+  // <source srcset> assets (WebP twins)
+  for (const m of html.matchAll(/\bsrcset="(\/assets\/[^"\s]+)"/g)) {
+    if (!existsSync(join(ROOT, m[1]))) errors.push(`${page}: missing srcset asset ${m[1]}`);
+  }
+
   // internal links resolve
   for (const m of html.matchAll(/\bhref="([^"]+)"/g)) {
     const href = m[1];

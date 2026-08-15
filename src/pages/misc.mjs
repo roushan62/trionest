@@ -167,6 +167,7 @@ export const contact = page({
       <div>${icon('pin')}<span><strong>Office</strong>${site.addressLines.map(esc).join('<br>')}</span></div>
       <div>${icon('clock')}<span><strong>Office hours</strong>${esc(site.hours)}</span></div>
       <div>${icon('globe')}<span><strong>Active locations</strong>${esc(site.cities.join(' · '))}</span></div>
+      <div>${icon('pin')}<span><strong>PAN-India coverage</strong>We serve <a href="/locations/" style="color:var(--accent)">every state and union territory</a> — see the city-wise network.</span></div>
     </div>
 
     <div class="map">

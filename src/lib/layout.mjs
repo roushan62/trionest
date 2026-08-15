@@ -155,6 +155,20 @@ const footer = () => `<footer class="foot">
         <li><a href="/careers/">Careers</a></li>
       </ul>
     </div>
+    <div class="foot__col">
+      <h2 class="foot__h">Coverage</h2>
+      <ul>
+        <li><a href="/locations/"><strong>PAN-India — all states</strong></a></li>
+        <li><a href="/locations/delhi/">Delhi-NCR</a></li>
+        <li><a href="/locations/maharashtra/">Maharashtra</a></li>
+        <li><a href="/locations/karnataka/">Karnataka</a></li>
+        <li><a href="/locations/telangana/">Telangana</a></li>
+        <li><a href="/locations/tamil-nadu/">Tamil Nadu</a></li>
+        <li><a href="/locations/uttar-pradesh/">Uttar Pradesh</a></li>
+        <li><a href="/locations/gujarat/">Gujarat</a></li>
+        <li><a href="/locations/west-bengal/">West Bengal</a></li>
+      </ul>
+    </div>
     <div class="foot__col foot__col--contact">
       <h2 class="foot__h">Contact</h2>
       <ul class="foot__contact">
@@ -190,10 +204,27 @@ export function page({
   jsonld = [],
   bodyClass = '',
   noindex = false,
+  ogImage = null,
 }) {
   const canonical = site.url + path;
-  const og = `${site.url}/assets/brand/og-default.png`;
-  const ld = jsonld
+  const og = ogImage ? site.url + ogImage : `${site.url}/assets/brand/og-default.png`;
+
+  /* Automatic BreadcrumbList schema whenever breadcrumbs render */
+  const allLd = [...jsonld];
+  if (crumbs && crumbs.length) {
+    const items = [{ label: 'Home', href: '/' }, ...crumbs];
+    allLd.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: items.map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: c.label,
+        ...(i < items.length - 1 ? { item: site.url + c.href } : {}),
+      })),
+    });
+  }
+  const ld = allLd
     .map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script>`)
     .join('\n  ');
 
@@ -215,6 +246,7 @@ ${noindex ? '<meta name="robots" content="noindex,follow">' : '<meta name="robot
 <meta property="og:image" content="${og}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${esc(title)}">
 <meta property="og:locale" content="en_IN">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">

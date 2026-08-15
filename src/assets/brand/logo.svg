@@ -1,9 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 328 72" width="328" height="72" role="img" aria-label="TrioNest Spaces">
   <title>TrioNest Spaces</title>
-  <g fill="none" stroke="#b5541a" stroke-width="4.5" stroke-linejoin="round">
-    <path d="M34 12 56 50H12z"/>
+  <g transform="translate(6 11) scale(0.52)">
+    <polygon fill="#5aa347" points="50,10 8,86 21.2,76.6 50,23.4"/>
+    <polygon fill="#b9cc33" points="50,10 92,86 78.8,76.6 50,23.4"/>
+    <polygon fill="#2e7d43" points="8,86 92,86 78.8,76.6 21.2,76.6"/>
+    <polygon fill="#478f44" points="8,86 16.8,70.2 21.2,76.6"/>
   </g>
-  <path d="M34 26 45 44H23z" fill="#b5541a"/>
   <text x="76" y="37" font-family="'Space Grotesk',Segoe UI,sans-serif" font-size="25" font-weight="700" fill="#1c2a25" letter-spacing="-0.6">TrioNest</text>
-  <text x="76" y="57" font-family="'Space Grotesk',Segoe UI,sans-serif" font-size="13" font-weight="600" fill="#b5541a" letter-spacing="4.6">SPACES</text>
+  <text x="76" y="57" font-family="'Space Grotesk',Segoe UI,sans-serif" font-size="13" font-weight="600" fill="#2e7d43" letter-spacing="4.6">SPACES</text>
 </svg>

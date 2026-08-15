@@ -4,7 +4,7 @@
  * Outputs plain HTML/CSS/JS to /dist. No runtime server, no framework.
  * Deploy: GitHub Pages (dist/) or upload dist/* to Hostinger public_html.
  */
-import { mkdirSync, writeFileSync, cpSync, rmSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, cpSync, rmSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -13,6 +13,7 @@ import { services } from './src/data/services.mjs';
 import { industries } from './src/data/industries.mjs';
 import { projects } from './src/data/projects.mjs';
 import { posts } from './src/data/blog.mjs';
+import { locations } from './src/data/locations.mjs';
 
 import home from './src/pages/home.mjs';
 import { about, process as processPage, qualitySafety, certifications, team, clients, companyProfile, careers } from './src/pages/company.mjs';
@@ -20,6 +21,7 @@ import { servicesIndex, servicePage } from './src/pages/services.mjs';
 import { industriesIndex, industryPage } from './src/pages/industries.mjs';
 import { projectsIndex, projectPage } from './src/pages/projects.mjs';
 import { blogIndex, blogPost, contact, privacy, terms, notFound } from './src/pages/misc.mjs';
+import { locationsIndex, locationPage } from './src/pages/locations.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DIST = join(__dirname, 'dist');
@@ -62,6 +64,8 @@ write('/services/', servicesIndex);
 services.forEach((s) => write(`/services/${s.slug}/`, servicePage(s)));
 write('/industries/', industriesIndex);
 industries.forEach((i) => write(`/industries/${i.slug}/`, industryPage(i)));
+write('/locations/', locationsIndex);
+locations.forEach((l) => write(`/locations/${l.slug}/`, locationPage(l)));
 write('/projects/', projectsIndex);
 projects.forEach((p) => write(`/projects/${p.slug}/`, projectPage(p, projects)));
 write('/process/', processPage);
@@ -81,10 +85,35 @@ write('/404.html', notFound);
 /* ---------------------------------------------------------------- assets */
 cpSync(join(__dirname, 'src/assets'), join(DIST, 'assets'), { recursive: true });
 
+/* Minify the stylesheet in dist only — the src copy stays human-readable */
+function minifyCSS(css) {
+  return css
+    .replace(/\/\*[^]*?\*\//g, '') // block comments
+    .replace(/\s+/g, ' ') // collapse whitespace
+    .replace(/\s*([{}:;,>])\s*/g, '$1') // structural chars
+    .replace(/;}/g, '}')
+    .trim();
+}
+const cssOut = join(DIST, 'assets/css/style.css');
+const cssKb = (b) => (b / 1024).toFixed(1) + 'KB';
+const cssSrc = readFileSync(cssOut, 'utf8');
+writeFileSync(cssOut, minifyCSS(cssSrc));
+console.log(
+  `✓ css minified ${cssKb(Buffer.byteLength(cssSrc))} → ${cssKb(statSync(cssOut).size)}`,
+);
+
 /* ---------------------------------------------------------------- sitemap */
 const today = new Date().toISOString().slice(0, 10);
 const priority = (p) =>
-  p === '/' ? '1.0' : /^\/(services|projects|industries|contact)\/$/.test(p) ? '0.9' : p.split('/').filter(Boolean).length > 1 ? '0.7' : '0.8';
+  p === '/'
+    ? '1.0'
+    : /^\/(services|projects|industries|contact|locations)\/$/.test(p)
+      ? '0.9'
+      : /^\/locations\/[^/]+\/$/.test(p)
+        ? '0.8'
+        : p.split('/').filter(Boolean).length > 1
+          ? '0.7'
+          : '0.8';
 
 const urls = written
   .filter((p) => !p.endsWith('.html'))

@@ -3,12 +3,21 @@ import { site } from '../data/site.mjs';
 import { allClients, testimonials } from '../data/clients.mjs';
 import { processStages } from '../data/site.mjs';
 
-export const img = (src, alt, { w, h, cls = '', eager = false, ratio } = {}) =>
-  `<img src="${src}" alt="${esc(alt)}"${w ? ` width="${w}"` : ''}${h ? ` height="${h}"` : ''}${
+export const img = (src, alt, { w, h, cls = '', eager = false, ratio } = {}) => {
+  const tag = `<img src="${src}" alt="${esc(alt)}"${w ? ` width="${w}"` : ''}${h ? ` height="${h}"` : ''}${
     cls ? ` class="${cls}"` : ''
   } ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async"${
     ratio ? ` style="aspect-ratio:${ratio}"` : ''
   }>`;
+  /* Site photography ships with a WebP twin (see tools/build script); use it when the src is a local JPG */
+  if (/^\/assets\/img\/.+\.jpe?g$/.test(src)) {
+    return `<picture><source srcset="${src.replace(/\.jpe?g$/, '.webp')}" type="image/webp">${tag}</picture>`;
+  }
+  return tag;
+};
+
+export const clientLogo = (c, { w = 260, h = 130 } = {}) =>
+  `<img src="/assets/clients/${c.logo}.svg" alt="${esc(c.name)} logo" width="${w}" height="${h}" loading="lazy" decoding="async">`;
 
 export const statBar = () => `<section class="stats" aria-label="Company at a glance">
   <div class="wrap"><div class="stats__grid">
@@ -28,10 +37,7 @@ export const logoStrip = (label = 'Trusted by leaders across BFSI, technology, r
   <div class="wrap">
     <p class="logos__label">${label}</p>
     <div class="logos__grid">
-      ${allClients
-        .slice(0, 20)
-        .map((c) => `<div class="logos__cell"><span>${esc(c.name)}</span></div>`)
-        .join('')}
+      ${allClients.map((c) => `<div class="logos__cell">${clientLogo(c)}</div>`).join('')}
     </div>
     <p class="logos__more">Client names shown are organisations for which TrioNest Spaces has executed interior, electrical or HVAC scope. Trademarks belong to their respective owners.</p>
   </div>
