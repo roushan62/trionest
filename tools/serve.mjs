@@ -45,6 +45,16 @@ async function resolve(urlPath) {
 }
 
 createServer(async (req, res) => {
+  // The local preview is deliberately static and must never expose PHP source or
+  // pretend that an email was sent. Hostinger executes this endpoint in production.
+  if (req.url.split('?')[0] === '/send-mail.php') {
+    res.writeHead(501, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify({
+      ok: false,
+      message: 'Email delivery is available after deployment to the PHP-enabled Hostinger server. Please email spaces@trionest.in while using this local preview.',
+    }));
+  }
+
   const file = await resolve(req.url);
   if (!file) {
     const nf = join(ROOT, '404.html');
