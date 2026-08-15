@@ -154,7 +154,7 @@
     var status = form.querySelector('.form__status');
     var submit = form.querySelector('[type="submit"]');
     var action = form.getAttribute('action') || '';
-    var configured = action.indexOf('REPLACE_WITH_YOUR_FORM_ID') === -1 && /^https?:/.test(action);
+    var configured = !!action && action.indexOf('REPLACE_WITH_YOUR_FORM_ID') === -1;
 
     function say(msg, ok) {
       if (!status) return;
@@ -192,14 +192,30 @@
 
       if (submit) { submit.disabled = true; submit.dataset.label = submit.textContent; submit.textContent = 'Sending\u2026'; }
 
-      fetch(action, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
+      fetch(action, {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'same-origin',
+      })
         .then(function (res) {
-          if (!res.ok) throw new Error('bad status');
+          return res.json().catch(function () { return {}; }).then(function (payload) {
+            if (!res.ok || payload.ok === false) {
+              throw new Error(payload.message || 'We could not send that.');
+            }
+            return payload;
+          });
+        })
+        .then(function () {
           form.reset();
           say('Thank you. Your enquiry has been received \u2014 we typically respond within one working day.', true);
         })
-        .catch(function () {
-          say('We could not send that. Please email spaces@trionest.in or call +91 93195 74674.', false);
+        .catch(function (err) {
+          var msg = err && err.message;
+          if (!msg || /failed to fetch|networkerror|we could not send that\.?$/i.test(msg)) {
+            msg = 'We could not send that. Please email spaces@trionest.in or call +91 93195 74674.';
+          }
+          say(msg, false);
         })
         .finally(function () {
           if (submit) { submit.disabled = false; submit.textContent = submit.dataset.label || 'Send enquiry'; }

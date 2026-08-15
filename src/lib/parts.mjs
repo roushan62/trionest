@@ -177,7 +177,7 @@ export const projectCard = (p) => `<a class="pcard" href="/projects/${p.slug}/" 
   </div>
 </a>`;
 
-/* Enquiry form — posts to a third-party service, mailto fallback if unset. */
+/* Enquiry form — posts to the bundled database-free PHP mailer; mailto fallback if unset. */
 export const enquiryForm = ({ compact = false, subject = 'Website enquiry', id = 'enquiry' } = {}) => `
 <form class="formcard" data-form data-subject="${esc(subject)}" action="${site.formEndpoint}" method="POST" id="${id}">
   <input type="hidden" name="_subject" value="${esc(subject)}">

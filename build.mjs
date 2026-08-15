@@ -84,6 +84,8 @@ write('/404.html', notFound);
 
 /* ---------------------------------------------------------------- assets */
 cpSync(join(__dirname, 'src/assets'), join(DIST, 'assets'), { recursive: true });
+// Tiny database-free contact mailer for shared hosts such as Hostinger.
+cpSync(join(__dirname, 'src/send-mail.php'), join(DIST, 'send-mail.php'));
 
 /* Minify the stylesheet in dist only — the src copy stays human-readable */
 function minifyCSS(css) {

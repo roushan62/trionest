@@ -9,8 +9,9 @@ Includes full PAN-India SEO coverage: an index plus 32 state/UT landing pages un
 unique market-specific content, city lists, FAQs and `Service` + `FAQPage` +
 `BreadcrumbList` schema.
 
-Built for GitHub Pages first and Hostinger shared hosting later: the `dist/` folder is
-plain static files with no Node server, no database and no serverless functions.
+Built for Hostinger shared hosting: the `dist/` folder is plain HTML/CSS/vanilla JS with
+no Node server, database or serverless functions. A single dependency-free PHP mailer is
+included only to deliver contact-form submissions to `spaces@trionest.in`.
 
 ---
 
@@ -67,6 +68,7 @@ src/
     layout.mjs            Page shell: head, header, nav, breadcrumbs, footer, icons
     parts.mjs             Reusable blocks: stat bar, logo strip, cards, forms
   pages/                  Page templates (home, company, services, industries, …)
+  send-mail.php           Database-free Hostinger contact-form mailer
   assets/
     css/style.css         Design system (one file, CSS custom properties)
     js/main.js            Nav, filters, carousel, form handling (no libraries)
@@ -111,18 +113,16 @@ The site is built to be **honest by default**: nothing is invented. Where real d
 missing, a clearly-styled placeholder block appears instead of fabricated content.
 Search the site for those blocks, or work through this list.
 
-### 1. Connect the contact form (required)
-Currently forms fall back to opening the user's email client, so no lead is lost —
-but you should wire up a real service.
+### 1. Verify the contact form (required)
+The bundled `send-mail.php` validates submissions and sends them directly to
+`spaces@trionest.in` using Hostinger's PHP `mail()` transport. It stores no data and
+needs no database, API key or third-party form account. After deployment, submit one
+test enquiry and confirm both Inbox and Spam. If Hostinger has outbound mail disabled,
+enable PHP mail in hPanel or ask Hostinger support to enable it for the domain.
 
-1. Create a form at [Formspree](https://formspree.io) or [Web3Forms](https://web3forms.com) (both have free tiers and work on static hosting).
-2. Put the endpoint URL in `formEndpoint` in `src/data/site.mjs`.
-3. Rebuild, submit a test enquiry, and confirm you receive it.
-
-### 2. Replace the logo
-`src/assets/brand/logo.svg` is a clean stand-in of the real brand mark (green
-three-arm triangle + wordmark). Drop your real `logo.svg` (or `logo.png` — update the
-two `<img>` references in `src/lib/layout.mjs`) in place when the original artwork is available.
+### 2. Brand logo — already set
+`src/assets/brand/logo.svg` and `favicon.svg` use the official green impossible-triangle
+mark from trionest.in, paired with the TrioNest Spaces wordmark.
 
 ### 3. Brand colour — already set
 The accent is the real brand green (`--accent: #2e7d43`) sampled from the TrioNest
