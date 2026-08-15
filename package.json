@@ -7,9 +7,11 @@
   "scripts": {
     "build": "node build.mjs",
     "images": "python3 tools/gen-images.py",
+    "optimize-images": "node tools/optimize-images.mjs",
     "serve": "node build.mjs && node tools/serve.mjs",
     "dev": "node tools/serve.mjs",
-    "check": "node build.mjs && node tools/check.mjs"
+    "check": "node build.mjs && node tools/check.mjs",
+    "deploy": "node build.mjs && echo '\\n✅ Build complete! Upload the dist/ folder to Hostinger public_html/.\\nSee deploy/HOSTINGER.md for detailed instructions.'"
   },
   "engines": {
     "node": ">=18"
