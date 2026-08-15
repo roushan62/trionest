@@ -1,6 +1,6 @@
 {
   "name": "trionest-spaces",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "TrioNest Spaces — static corporate website (HTML/CSS/vanilla JS, zero runtime dependencies)",
   "type": "module",
@@ -13,13 +13,15 @@
     "serve": "node build.mjs && node tools/serve.mjs",
     "dev": "node tools/serve.mjs",
     "check": "node build.mjs && node tools/check.mjs",
-    "deploy": "node build.mjs && echo '\\n✅ Build complete! Upload the dist/ folder to Hostinger public_html/.\\nSee deploy/HOSTINGER.md for detailed instructions.'"
+    "deploy": "node build.mjs && echo '\\n✅ Build complete! Upload the dist/ folder to Hostinger public_html/.\\nSee deploy/HOSTINGER.md for detailed instructions.'",
+    "smoke": "node build.mjs && node tools/smoke.mjs"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
+    "jsdom": "^30.0.1",
     "playwright": "^1.49.0"
   }
 }

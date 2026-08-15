@@ -42,7 +42,7 @@ export const projects = [
     commissioning: null,
     testimonial: null,
     gallery: [],
-    image: 'project-retail',
+    image: 'project-cars24-showroom',
   },
   {
     slug: 'centricity-multi-city-interiors',
@@ -100,7 +100,7 @@ export const projects = [
     commissioning: null,
     testimonial: null,
     gallery: [],
-    image: 'project-hvac',
+    image: 'project-concentrix-office',
   },
   {
     slug: 'indian-oil-pdil-electrification',
@@ -158,7 +158,7 @@ export const projects = [
     commissioning: null,
     testimonial: null,
     gallery: [],
-    image: 'project-bank',
+    image: 'project-lnt-branch',
   },
   {
     slug: 'panasonic-marelli-industrial-hvac',

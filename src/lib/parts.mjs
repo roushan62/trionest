@@ -1,6 +1,6 @@
 import { esc, icon, fill } from './layout.mjs';
 import { site } from '../data/site.mjs';
-import { allClients, testimonials } from '../data/clients.mjs';
+import { allClients, officeShowcase, testimonials } from '../data/clients.mjs';
 import { processStages } from '../data/site.mjs';
 
 export const img = (src, alt, { w, h, cls = '', eager = false, ratio } = {}) => {
@@ -16,30 +16,71 @@ export const img = (src, alt, { w, h, cls = '', eager = false, ratio } = {}) => 
   return tag;
 };
 
-export const clientLogo = (c, { w = 260, h = 130 } = {}) =>
-  `<img src="/assets/clients/${c.logo}.svg" alt="${esc(c.name)} logo" width="${w}" height="${h}" loading="lazy" decoding="async">`;
+export const clientLogo = (c) =>
+  `<img src="/assets/clients/${c.logo}.${c.ext || 'webp'}" alt="${esc(c.name)} logo" width="220" height="104" loading="lazy" decoding="async">`;
 
 export const statBar = () => `<section class="stats" aria-label="Company at a glance">
   <div class="wrap"><div class="stats__grid">
     ${site.stats
-      .map(
-        (s) =>
-          `<div class="stat"><div class="stat__v">${esc(s.value)}</div><div class="stat__l">${esc(
-            s.label,
-          )}</div></div>`,
-      )
+      .map((s) => {
+        const m = s.value.match(/^(\d+)(.*)$/);
+        return `<div class="stat"><div class="stat__v"${
+          m ? ` data-count="${m[1]}" data-suffix="${esc(m[2])}"` : ''
+        }>${m ? `<span class="stat__num">0</span>${esc(m[2])}` : esc(s.value)}</div><div class="stat__l">${esc(
+          s.label,
+        )}</div></div>`;
+      })
       .join('')}
   </div></div>
 </section>`;
 
-export const logoStrip = (label = 'Trusted by leaders across BFSI, technology, retail &amp; industry') => `
+export const logoStrip = (label = 'Trusted by leaders across BFSI, technology, retail &amp; industry') => {
+  const row = (hidden = false) =>
+    allClients
+      .map((c) => `<div class="logos__cell"${hidden ? ' aria-hidden="true"' : ''}>${clientLogo(c)}<span class="logos__name">${esc(c.name)}</span></div>`)
+      .join('');
+  return `
 <section class="logos sec--alt" aria-label="Client logos">
   <div class="wrap">
     <p class="logos__label">${label}</p>
-    <div class="logos__grid">
-      ${allClients.map((c) => `<div class="logos__cell">${clientLogo(c)}</div>`).join('')}
-    </div>
+  </div>
+  <div class="logos__marquee" data-marquee>
+    <div class="logos__track">${row()}${row(true)}</div>
+  </div>
+  <div class="wrap">
     <p class="logos__more">Client names shown are organisations for which TrioNest Spaces has executed interior, electrical or HVAC scope. Trademarks belong to their respective owners.</p>
+  </div>
+</section>`;
+};
+
+export const clientOffices = () => `<section class="sec offices" aria-label="Client offices delivered">
+  <div class="wrap">
+    <div class="sec__head sec__head--split">
+      <div>
+        <span class="kicker">Client offices</span>
+        <h2>Spaces we have delivered <em>for the brands you know.</em></h2>
+      </div>
+      <p>Showroom floors, delivery centres, branch networks and hospital campuses — each delivered with the same six-stage process, in the cities shown.</p>
+    </div>
+    <div class="offices__grid">
+      ${officeShowcase
+        .map(
+          (o, i) => `<article class="ocard" data-reveal style="--rd:${i * 70}ms">
+        <div class="ocard__media">${img(`/assets/img/${o.image}.jpg`, o.alt, { w: 800, h: 500 })}
+          <div class="ocard__logo">${clientLogo({ name: o.client, logo: o.logo, ext: o.ext })}</div>
+        </div>
+        <div class="ocard__body">
+          <h3>${esc(o.client)}</h3>
+          <p class="ocard__kind">${esc(o.kind)}</p>
+          <div class="ocard__meta">
+            ${o.cities.length ? `<span class="ocard__cities">${o.cities.map((c) => `<span class="tag">${esc(c)}</span>`).join('')}</span>` : ''}
+            <span class="ocard__note">${esc(o.note)}</span>
+          </div>
+        </div>
+      </article>`,
+        )
+        .join('')}
+    </div>
   </div>
 </section>`;
 
@@ -121,7 +162,7 @@ export const projectCard = (p) => `<a class="pcard" href="/projects/${p.slug}/" 
   <div class="pcard__media">${img(`/assets/img/${p.image}.jpg`, `${p.name} — ${p.sector} project by TrioNest Spaces`, {
     w: 800,
     h: 500,
-  })}</div>
+  })}<span class="pcard__go">${icon('arrow')}</span></div>
   <div class="pcard__body">
     <p class="pcard__meta">${esc(p.sector)} · ${esc(p.location)}</p>
     <h3>${esc(p.name)}</h3>

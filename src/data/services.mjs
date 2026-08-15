@@ -42,6 +42,14 @@ export const services = [
     processNote:
       'For interiors, the six-stage process front-loads design. Survey and brief establish the shell condition and space programme, then concept and GFC drawings are frozen before the BOQ is priced, so the fixed-cost proposal is built on a complete drawing set. On site, execution runs to a weekly-reported baseline programme with stage-wise QC, and handover releases as-built drawings, warranties and a signed snag closure.',
     cta: 'Get a proposal for your interior fit-out',
+    gallery: [
+      { img: 'office-reception', caption: 'Reception & visitor journey — brand-led arrival spaces' },
+      { img: 'office-workstations', caption: 'Open-plan workspaces — acoustic and lighting comfort' },
+      { img: 'office-boardroom', caption: 'Boardrooms & meeting suites — AV-ready, acoustically treated' },
+      { img: 'office-cafe', caption: 'Cafeterias & breakouts — the social heart of the floor' },
+      { img: 'office-cabin', caption: 'Executive cabins — joinery-led, private and quiet' },
+      { img: 'office-training', caption: 'Training & collaboration rooms — flexible, tech-enabled' },
+    ],
   },
   {
     slug: 'electrical',
