@@ -98,14 +98,17 @@ but you should wire up a real service.
 (or `logo.png` — update the two `<img>` references in `src/lib/layout.mjs`) in place.
 
 ### 3. Sample the real accent colour
-The palette is dark charcoal + a copper accent. If your live-site accent differs,
-change **one line** — `--accent` in `src/assets/css/style.css` — and everything follows.
+The palette is a light, bright interior-brand theme: warm ivory base, pine-charcoal
+ink and a deep copper accent. If your live-site accent differs, change
+**one line** — `--accent` in `src/assets/css/style.css` — and everything follows.
 
 ### 4. Replace the photography
-Every image in `src/assets/img/` is a marked placeholder. Replace with real TrioNest
-project photography, keeping the same filenames and aspect ratios (16:10 for cards,
-2000×1250 for the hero). Prioritise: site progress shots, services above the ceiling
-before closure, finished spaces, MEP and panel work.
+`src/assets/img/` currently holds professional AI-generated interior photography that
+matches the light theme (bright offices, site work, MEP installations) so the layout
+never shows empty frames. Replace each file with real TrioNest project photography,
+keeping the same filenames and 16:10 aspect ratios (2000×1250 for the hero).
+Prioritise: site progress shots, services above the ceiling before closure, finished
+spaces, MEP and panel work. `npm run images` never overwrites existing photos.
 
 ### 5. Replace the client logos
 `src/assets/clients/*.png` are text-rendered stand-ins. Drop in the original logo files
@@ -162,16 +165,21 @@ be served from a domain root — not from a subfolder.
 
 | Token | Value | Use |
 |---|---|---|
-| `--ink-900` | `#08090b` | Page background |
-| `--ink-850` | `#0c0e10` | Alternating sections, cards |
-| `--accent` | `#d98a3d` | Single accent — CTAs, kickers, numbers |
-| `--paper` | `#f4f5f6` | Body text |
-| `--f-head` | Space Grotesk | Headings |
-| `--f-body` | Inter | Body copy |
+| `--bg` | `#faf8f4` | Warm ivory page background |
+| `--surface` | `#ffffff` | Cards, header, form |
+| `--sand` | `#f4efe6` | Alternating sections, footer |
+| `--ink-900` | `#1c2a25` | Pine-charcoal headings / text |
+| `--accent` | `#b5541a` | Deep copper — CTAs, kickers, numbers |
+| `--teal` | `#0d5f56` | Supporting deep teal |
+| `--f-head` | Fraunces | Editorial serif display headings |
+| `--f-body` | Inter | Body copy and UI |
 
+Bright, light-only theme (no dark sections). Warm, premium interior-studio feel:
+soft warm shadows, pill buttons, 18px card radii, serif display type.
 Responsive breakpoints: 360 / 700 / 900 / 1100 / 1240px. Mobile-first throughout.
 Accessibility: skip link, one H1 per page, keyboard-navigable menus, visible focus
-rings, `aria-current` on active nav, `prefers-reduced-motion` respected.
+rings, `aria-current` on active nav, WCAG AA contrast throughout,
+`prefers-reduced-motion` respected.
 
 ---
 

@@ -30,15 +30,10 @@ export const logoStrip = (label = 'Trusted by leaders across BFSI, technology, r
     <div class="logos__grid">
       ${allClients
         .slice(0, 20)
-        .map(
-          (c) =>
-            `<div class="logos__cell"><img src="/assets/clients/${c.logo}.png" alt="${esc(
-              c.name,
-            )}" width="160" height="60" loading="lazy" decoding="async"></div>`,
-        )
+        .map((c) => `<div class="logos__cell"><span>${esc(c.name)}</span></div>`)
         .join('')}
     </div>
-    <p class="logos__more">Client names shown are organisations for which TrioNest Spaces has executed interior, electrical or HVAC scope. Logos remain the property of their respective owners.</p>
+    <p class="logos__more">Client names shown are organisations for which TrioNest Spaces has executed interior, electrical or HVAC scope. Trademarks belong to their respective owners.</p>
   </div>
 </section>`;
 

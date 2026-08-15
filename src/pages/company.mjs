@@ -417,18 +417,13 @@ ${statBar()}
     <h2 style="font-size:1.15rem;margin-bottom:1rem">${esc(g.sector)}</h2>
     <div class="logos__grid">
       ${g.clients
-        .map(
-          (c) =>
-            `<div class="logos__cell"><img src="/assets/clients/${c.logo}.png" alt="${esc(
-              c.name,
-            )}" width="160" height="60" loading="lazy" decoding="async"></div>`,
-        )
+        .map((c) => `<div class="logos__cell"><span>${esc(c.name)}</span></div>`)
         .join('')}
     </div>
   </div>`,
     )
     .join('')}
-  <p class="logos__more mt-3">Logos remain the property of their respective owners and are shown to identify projects executed by TrioNest Spaces. Sector grouping reflects the client’s primary industry.</p>
+  <p class="logos__more mt-3">Trademarks belong to their respective owners; names are shown to identify projects executed by TrioNest Spaces. Sector grouping reflects the client’s primary industry.</p>
 </div></section>
 
 ${testimonialSection('Testimonials')}

@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 328 72" width="328" height="72" role="img" aria-label="TrioNest Spaces">
   <title>TrioNest Spaces</title>
-  <g fill="none" stroke="#d98a3d" stroke-width="4" stroke-linejoin="round">
+  <g fill="none" stroke="#b5541a" stroke-width="4.5" stroke-linejoin="round">
     <path d="M34 12 56 50H12z"/>
   </g>
-  <path d="M34 26 45 44H23z" fill="#d98a3d"/>
-  <text x="76" y="36" font-family="'Space Grotesk',Segoe UI,sans-serif" font-size="25" font-weight="700" fill="#f4f5f6" letter-spacing="-0.6">TrioNest</text>
-  <text x="76" y="56" font-family="'Space Grotesk',Segoe UI,sans-serif" font-size="13" font-weight="500" fill="#d98a3d" letter-spacing="4.6">SPACES</text>
+  <path d="M34 26 45 44H23z" fill="#b5541a"/>
+  <text x="76" y="37" font-family="'Space Grotesk',Segoe UI,sans-serif" font-size="25" font-weight="700" fill="#1c2a25" letter-spacing="-0.6">TrioNest</text>
+  <text x="76" y="57" font-family="'Space Grotesk',Segoe UI,sans-serif" font-size="13" font-weight="600" fill="#b5541a" letter-spacing="4.6">SPACES</text>
 </svg>

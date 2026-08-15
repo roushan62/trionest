@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Generate brand raster assets + clearly-marked photo placeholders.
 
-These placeholders exist so the layout is never broken and never shows
-unrelated stock photography. Replace the files in src/assets/img/ with real
-TrioNest project photography (same filenames, same aspect ratio) at launch.
+Brand palette: light / bright (warm ivory + deep copper + pine ink).
+
+Photos: files in src/assets/img/ are skipped when they already exist, so
+real photography dropped in by hand is never overwritten. The hatched
+placeholder below is only produced for missing files.
 """
 import os
 from PIL import Image, ImageDraw, ImageFont
@@ -15,12 +17,13 @@ CLIENTS = os.path.join(ROOT, 'src/assets/clients')
 for d in (BRAND, IMG, CLIENTS):
     os.makedirs(d, exist_ok=True)
 
-INK = (8, 9, 11)
-INK2 = (17, 20, 23)
-INK3 = (27, 31, 36)
-ACCENT = (217, 138, 61)
-PAPER = (244, 245, 246)
-MUTE = (135, 143, 152)
+INK = (28, 42, 37)          # pine charcoal
+INK2 = (67, 81, 76)         # secondary text
+MUTE = (110, 123, 117)      # muted
+ACCENT = (181, 84, 26)      # deep copper
+PAPER = (250, 248, 244)     # warm ivory
+SAND = (244, 239, 230)      # warm sand
+WHITE = (255, 255, 255)
 
 FONTDIRS = ['/usr/share/fonts', '/usr/local/share/fonts']
 
@@ -58,18 +61,18 @@ def tri(d, cx, cy, r, width=6, fill=False):
 # ---------------------------------------------------------------- OG image
 def og():
     W, H = 1200, 630
-    im = Image.new('RGB', (W, H), INK)
+    im = Image.new('RGB', (W, H), PAPER)
     d = ImageDraw.Draw(im)
-    d.rectangle([0, 0, W, 6], fill=ACCENT)
-    for i in range(0, W, 40):
-        d.line([(i, 0), (i, H)], fill=(12, 14, 16), width=1)
-    tri(d, 108, 118, 34, 6)
+    d.rectangle([0, 0, W, 8], fill=ACCENT)
+    d.rectangle([0, H - 8, W, H], fill=ACCENT)
+    d.ellipse([860, -60, 1220, 300], fill=SAND)
+    tri(d, 108, 118, 34, 7)
     tri(d, 108, 126, 16, fill=True)
-    d.text((160, 92), 'TrioNest Spaces', font=font(40, True), fill=PAPER)
-    d.text((80, 250), 'One Partner.', font=font(82, True), fill=PAPER)
-    d.text((80, 344), 'Three Disciplines.', font=font(82, True), fill=ACCENT)
+    d.text((170, 92), 'TrioNest Spaces', font=font(40, True), fill=INK)
+    d.text((80, 250), 'One Partner.', font=font(80, True), fill=INK)
+    d.text((80, 344), 'Three Disciplines.', font=font(80, True), fill=ACCENT)
     d.text((80, 468), 'Corporate Interiors  ·  Electrical Contracting  ·  HVAC Engineering',
-           font=font(27), fill=(185, 191, 198))
+           font=font(27), fill=INK2)
     d.text((80, 540), '100+ projects delivered  ·  PAN-India  ·  trionest.in',
            font=font(23), fill=MUTE)
     im.save(os.path.join(BRAND, 'og-default.png'), optimize=True)
@@ -77,7 +80,7 @@ def og():
 
 def touch_icon():
     S = 180
-    im = Image.new('RGB', (S, S), (12, 14, 16))
+    im = Image.new('RGB', (S, S), PAPER)
     d = ImageDraw.Draw(im)
     tri(d, S // 2, S // 2 - 6, 54, 10)
     tri(d, S // 2, S // 2 + 6, 26, fill=True)
@@ -86,15 +89,14 @@ def touch_icon():
 
 # ------------------------------------------------- photo placeholder frames
 def placeholder(name, label, w=1600, h=1000):
-    im = Image.new('RGB', (w, h), INK2)
+    im = Image.new('RGB', (w, h), SAND)
     d = ImageDraw.Draw(im)
-    # diagonal hatch, engineering-drawing feel
     step = 46
     for i in range(-h, w + h, step):
-        d.line([(i, 0), (i + h, h)], fill=(21, 24, 28), width=1)
-    d.rectangle([0, 0, w - 1, h - 1], outline=(38, 43, 49), width=2)
+        d.line([(i, 0), (i + h, h)], fill=(238, 232, 220), width=1)
+    d.rectangle([0, 0, w - 1, h - 1], outline=(214, 205, 189), width=2)
     m = int(w * 0.055)
-    d.rectangle([m, m, w - m, h - m], outline=(48, 54, 61), width=1)
+    d.rectangle([m, m, w - m, h - m], outline=(226, 218, 203), width=1)
     tri(d, w // 2, int(h * 0.40), int(h * 0.10), max(4, int(h / 190)))
     tri(d, w // 2, int(h * 0.425), int(h * 0.046), fill=True)
 
@@ -102,30 +104,30 @@ def placeholder(name, label, w=1600, h=1000):
     f2 = font(max(14, int(h * 0.028)))
     t1 = label
     t2 = 'Replace with real TrioNest project photography'
-    for txt, f, y, col in ((t1, f1, 0.60, PAPER), (t2, f2, 0.685, MUTE)):
+    for txt, f, y, col in ((t1, f1, 0.60, INK), (t2, f2, 0.685, MUTE)):
         bb = d.textbbox((0, 0), txt, font=f)
         d.text(((w - (bb[2] - bb[0])) / 2, h * y), txt, font=f, fill=col)
-    d.text((m + 6, h - m - int(h * 0.045)), 'TRIONEST SPACES', font=font(max(11, int(h * 0.022)), True), fill=(60, 67, 75))
+    d.text((m + 6, h - m - int(h * 0.045)), 'TRIONEST SPACES', font=font(max(11, int(h * 0.022)), True), fill=(176, 168, 152))
     im.save(os.path.join(IMG, name + '.jpg'), quality=82, optimize=True, progressive=True)
 
 
-# ------------------------------------------------------ client logo frames
+# ------------------------------------------------------ client logo plates
 def client_logo(slug, name):
     w, h = 320, 120
-    im = Image.new('RGB', (w, h), (21, 24, 28))
+    im = Image.new('RGB', (w, h), WHITE)
     d = ImageDraw.Draw(im)
-    d.rectangle([0, 0, w - 1, h - 1], outline=(38, 43, 49), width=1)
+    d.rounded_rectangle([1, 1, w - 2, h - 2], radius=10, outline=(226, 218, 203), width=1)
     f = font(22, True)
     bb = d.textbbox((0, 0), name, font=f)
     while bb[2] - bb[0] > w - 40 and f.size > 11:
         f = font(f.size - 1, True)
         bb = d.textbbox((0, 0), name, font=f)
-    d.text(((w - (bb[2] - bb[0])) / 2, (h - (bb[3] - bb[1])) / 2 - 6), name, font=f, fill=(200, 206, 213))
+    d.text(((w - (bb[2] - bb[0])) / 2, (h - (bb[3] - bb[1])) / 2 - 6), name, font=f, fill=INK)
     im.save(os.path.join(CLIENTS, slug + '.png'), optimize=True)
 
 
 PLACEHOLDERS = [
-    ('hero-office', 'Corporate fit-out — hero image (16:10)'),
+    ('hero-office', 'Corporate fit-out — hero image (16:10)', 2000, 1250),
     ('project-office', 'Office interiors project'),
     ('project-retail', 'Retail rollout project'),
     ('project-hvac', 'HVAC installation'),
@@ -160,10 +162,12 @@ CLIENT_LOGOS = [
 if __name__ == '__main__':
     og()
     touch_icon()
-    placeholder('hero-office', 'Corporate fit-out — hero image', 2000, 1250)
-    for slug, label in PLACEHOLDERS[1:]:
-        placeholder(slug, label)
+    # Photos: only create the placeholder when the file is missing,
+    # so real photography is never overwritten.
+    for slug, label, *dims in PLACEHOLDERS:
+        if not os.path.exists(os.path.join(IMG, slug + '.jpg')):
+            placeholder(slug, label, *dims)
     for slug, name in CLIENT_LOGOS:
         if not os.path.exists(os.path.join(CLIENTS, slug + '.png')):
             client_logo(slug, name)
-    print('images generated')
+    print('brand assets generated (existing photos untouched)')
