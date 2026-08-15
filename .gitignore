@@ -1,0 +1,17 @@
+# build output — regenerate with `npm run build`
+dist/
+
+# dependencies (this project has none at runtime; playwright etc. are ad-hoc)
+node_modules/
+package-lock.json
+
+# os / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# python
+__pycache__/
+*.pyc
