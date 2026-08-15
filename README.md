@@ -3,7 +3,11 @@
 Production-grade static website for **TrioNest Spaces** — *One Partner. Three Disciplines.*
 Corporate interiors + electrical contracting + HVAC engineering.
 
-**42 pages. Zero runtime dependencies. Pure HTML/CSS/vanilla JS output.**
+**75 pages. Zero runtime dependencies. Pure HTML/CSS/vanilla JS output.**
+Includes full PAN-India SEO coverage: an index plus 32 state/UT landing pages under
+`/locations/` (28 states + Delhi, Chandigarh, Jammu & Kashmir, Puducherry), each with
+unique market-specific content, city lists, FAQs and `Service` + `FAQPage` +
+`BreadcrumbList` schema.
 
 Built for GitHub Pages first and Hostinger shared hosting later: the `dist/` folder is
 plain static files with no Node server, no database and no serverless functions.
@@ -13,10 +17,12 @@ plain static files with no Node server, no database and no serverless functions.
 ## Quick start
 
 ```bash
-npm run build     # build the static site into dist/
-npm run serve     # build + preview at http://localhost:4321
-npm run check     # build + run the QA checker (links, alt text, meta, headings)
-npm run images    # regenerate brand assets and photo placeholders
+npm run build            # build the static site into dist/ (minifies CSS too)
+npm run serve            # build + preview at http://localhost:4321
+npm run check            # build + run the QA checker (links | alt | meta | schema | headings | webp)
+npm run prepare-images   # resize + recompress JPEGs and generate WebP twins (needs ImageMagick)
+npm run logos            # render SVG client logos to PNG previews in tmp/ for review
+npm run images           # regenerate brand assets and photo placeholders
 ```
 
 Requires Node 18+. `npm run images` additionally needs Python 3 with Pillow
@@ -35,6 +41,7 @@ src/
     site.mjs              Company facts, stats, nav, 6-stage process, "why us"
     services.mjs          4 service lines with full scope copy
     industries.mjs        7 sector pages with copy + FAQs
+    locations.mjs         32 state/UT pages: cities, sectors, market notes, FAQs
     projects.mjs          Project list + case-study fields
     clients.mjs           Client logo wall (grouped by sector) + testimonials
     blog.mjs              6 full-length insight articles
@@ -69,6 +76,7 @@ Everything is data-driven. **You never need to touch HTML to change copy.**
 | The 6 process stages and their deliverables | `processStages` in `src/data/site.mjs` |
 | Service scope copy | `src/data/services.mjs` |
 | Sector copy and FAQs | `src/data/industries.mjs` |
+| State / city coverage pages | `src/data/locations.mjs` |
 | Projects and case studies | `src/data/projects.mjs` |
 | Client logo wall | `src/data/clients.mjs` |
 | Testimonials | `testimonials` in `src/data/clients.mjs` |
@@ -94,25 +102,27 @@ but you should wire up a real service.
 3. Rebuild, submit a test enquiry, and confirm you receive it.
 
 ### 2. Replace the logo
-`src/assets/brand/logo.svg` is a faithful stand-in. Drop your real `logo.svg`
-(or `logo.png` — update the two `<img>` references in `src/lib/layout.mjs`) in place.
+`src/assets/brand/logo.svg` is a clean stand-in of the real brand mark (green
+three-arm triangle + wordmark). Drop your real `logo.svg` (or `logo.png` — update the
+two `<img>` references in `src/lib/layout.mjs`) in place when the original artwork is available.
 
-### 3. Sample the real accent colour
-The palette is a light, bright interior-brand theme: warm ivory base, pine-charcoal
-ink and a deep copper accent. If your live-site accent differs, change
-**one line** — `--accent` in `src/assets/css/style.css` — and everything follows.
+### 3. Brand colour — already set
+The accent is the real brand green (`--accent: #2e7d43`) sampled from the TrioNest
+mark. If the live-site accent ever changes, it is **one line** in
+`src/assets/css/style.css` — and everything follows.
 
-### 4. Replace the photography
-`src/assets/img/` currently holds professional AI-generated interior photography that
-matches the light theme (bright offices, site work, MEP installations) so the layout
-never shows empty frames. Replace each file with real TrioNest project photography,
-keeping the same filenames and 16:10 aspect ratios (2000×1250 for the hero).
-Prioritise: site progress shots, services above the ceiling before closure, finished
-spaces, MEP and panel work. `npm run images` never overwrites existing photos.
+### 4. Replace the photography when real shoots exist
+`src/assets/img/` holds photorealistic site photography matched to each page's topic
+(hero office, per-service shots, per-project shots, plus process / QC / toolbox-talk /
+team photos wired into `/process/`, `/quality-safety/` and `/team/`). Swap in real
+TrioNest project photography with the same filenames whenever a real shoot is done,
+then re-run `npm run prepare-images` to regenerate the resized JPEGs + WebP twins.
 
-### 5. Replace the client logos
-`src/assets/clients/*.png` are text-rendered stand-ins. Drop in the original logo files
-from the current site, same filenames. **Confirm usage rights before launch.**
+### 5. Client logos — currently brand-accurate SVG wordmarks
+`src/assets/clients/*.svg` are faithful wordmark reproductions (real brand colours and
+styling) of the 22 public clients. When the original vector files are available from
+the client or their press kits, drop them in at the same paths. **Confirm usage rights
+before launch.**
 
 ### 6. Fill in the real data
 - **Certifications** (`src/pages/company.mjs` → `certItems`) — publish only what you hold: GST, PAN, CIN/Udyam, ISO, PF/ESIC, electrical contractor licence, insurance, OEM authorisations. Delete rows you don't have.
@@ -155,8 +165,9 @@ behaves identically. All internal links are root-relative (`/about/`), so the si
 be served from a domain root — not from a subfolder.
 
 ### Post-launch
-- Submit `https://trionest.in/sitemap.xml` in Google Search Console.
+- Submit `https://trionest.in/sitemap.xml` in Google Search Console (74 URLs, incl. every state page).
 - Claim/complete the Google Business Profile, then embed reviews on `/clients/`.
+- Create or verify state/city business listings (Bing Places, Justdial, IndiaMART, Sulekha) for local SEO reinforcement.
 - Run Lighthouse on the live URL and confirm 90+ across all four categories.
 
 ---
@@ -169,7 +180,7 @@ be served from a domain root — not from a subfolder.
 | `--surface` | `#ffffff` | Cards, header, form |
 | `--sand` | `#f4efe6` | Alternating sections, footer |
 | `--ink-900` | `#1c2a25` | Pine-charcoal headings / text |
-| `--accent` | `#b5541a` | Deep copper — CTAs, kickers, numbers |
+| `--accent` | `#2e7d43` | TrioNest brand green — CTAs, kickers, numbers |
 | `--teal` | `#0d5f56` | Supporting deep teal |
 | `--f-head` | Fraunces | Editorial serif display headings |
 | `--f-body` | Inter | Body copy and UI |

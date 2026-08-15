@@ -2,6 +2,7 @@ import { page, esc, icon, ctaBand } from '../lib/layout.mjs';
 import { site, whyReasons } from '../data/site.mjs';
 import { services } from '../data/services.mjs';
 import { projects } from '../data/projects.mjs';
+import { locations, zonesWithLocations } from '../data/locations.mjs';
 import {
   statBar,
   logoStrip,
@@ -35,7 +36,11 @@ const jsonld = [
       postalCode: site.address.postalCode,
       addressCountry: site.address.country,
     },
-    areaServed: site.cities.map((c) => ({ '@type': 'Place', name: c })),
+    areaServed: [
+      { '@type': 'Country', name: 'India' },
+      ...locations.map((l) => ({ '@type': 'State', name: l.name })),
+      ...site.cities.map((c) => ({ '@type': 'City', name: c })),
+    ],
     sameAs: site.social.map((s) => s.href),
   },
   {
@@ -64,6 +69,7 @@ const jsonld = [
         closes: '19:00',
       },
     ],
+    areaServed: [{ '@type': 'Country', name: 'India' }, ...locations.map((l) => ({ '@type': 'State', name: l.name }))],
     makesOffer: services.map((s) => ({
       '@type': 'Offer',
       itemOffered: { '@type': 'Service', name: s.title, description: s.intro },
@@ -181,6 +187,33 @@ ${processStrip()}
 
 ${testimonialSection('Client feedback')}
 
+<section class="sec" id="coverage">
+  <div class="wrap">
+    <div class="sec__head sec__head--split">
+      <div>
+        <span class="kicker">PAN-India delivery network</span>
+        <h2>${locations.length} states &amp; UTs. <em>One delivery standard.</em></h2>
+      </div>
+      <p>Survey, execution and handover run to the same documented process in every state. Locations marked with a dot have active TrioNest sites today.</p>
+    </div>
+    ${zonesWithLocations
+      .map(
+        ({ zone, items }) => `<div class="mb-1">
+      <p class="vcard__kicker" style="margin-bottom:.55rem">${esc(zone)} India</p>
+      <div class="cov__chips">
+        ${items
+          .map(
+            (l) => `<a class="cov__chip${l.hasActiveSites ? ' cov__chip--active' : ''}" href="/locations/${l.slug}/">${esc(l.name)}</a>`,
+          )
+          .join('')}
+      </div>
+    </div>`,
+      )
+      .join('')}
+    <p class="mt-2"><a class="tlink" href="/locations/">See how PAN-India delivery works ${icon('arrow')}</a></p>
+  </div>
+</section>
+
 <section class="sec sec--alt">
   <div class="wrap">
     <div class="sec__head">
@@ -218,8 +251,8 @@ ${testimonialSection('Client feedback')}
 `;
 
 export default page({
-  title: 'TrioNest Spaces | Corporate Interiors, Electrical & HVAC',
-  desc: 'Corporate interior fit-outs, electrical contracting and HVAC engineering under one contract. 100+ projects delivered, 100+ HVAC installations, PAN-India delivery from Delhi-NCR.',
+  title: 'TrioNest Spaces | Interiors, Electrical & HVAC — PAN India',
+  desc: 'Corporate interiors, electrical contracting and HVAC engineering under one contract — delivered PAN-India from Delhi-NCR. 100+ projects, 100+ HVAC installations.',
   path: '/',
   body,
   jsonld,

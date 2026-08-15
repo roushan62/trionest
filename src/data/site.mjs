@@ -223,6 +223,7 @@ export const nav = [
       { label: 'Certifications', href: '/certifications/' },
       { label: 'Leadership & Team', href: '/team/' },
       { label: 'Clients & Testimonials', href: '/clients/' },
+      { label: 'PAN-India Coverage', href: '/locations/' },
       { label: 'Company Profile', href: '/company-profile/' },
     ],
   },

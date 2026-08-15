@@ -1,13 +1,15 @@
 {
   "name": "trionest-spaces",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "TrioNest Spaces — static corporate website (HTML/CSS/vanilla JS, zero runtime dependencies)",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
     "images": "python3 tools/gen-images.py",
+    "prepare-images": "bash tools/prepare-images.sh",
     "optimize-images": "node tools/optimize-images.mjs",
+    "logos": "node tools/render-client-logos.mjs",
     "serve": "node build.mjs && node tools/serve.mjs",
     "dev": "node tools/serve.mjs",
     "check": "node build.mjs && node tools/check.mjs",
@@ -17,6 +19,7 @@
     "node": ">=18"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "playwright": "^1.49.0"
   }
 }

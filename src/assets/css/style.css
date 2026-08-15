@@ -19,12 +19,12 @@
   --ink-500: #64726c;     /* muted text */
   --ink-300: #a5b0aa;     /* faint text */
 
-  /* brand accent — deep copper */
-  --accent: #b5541a;
-  --accent-hi: #93420e;
-  --accent-soft: #faeadd;
-  --accent-line: rgba(181, 84, 26, 0.35);
-  --accent-grad: linear-gradient(120deg, #b5541a, #d98a3d);
+  /* brand accent — TrioNest green (matches the real logo mark) */
+  --accent: #2e7d43;
+  --accent-hi: #1f5c30;
+  --accent-soft: #e9f3ea;
+  --accent-line: rgba(46, 125, 67, 0.35);
+  --accent-grad: linear-gradient(120deg, #2e7d43, #7a9e2f);
 
   /* supporting deep teal */
   --teal: #0d5f56;
@@ -237,6 +237,7 @@ body.nav-open { overflow: hidden; }
 /* ---------- hero ---------- */
 .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
 .hero__bg { position: absolute; inset: 0; z-index: 0; }
+.hero__bg picture { display: block; width: 100%; height: 100%; }
 .hero__bg img { width: 100%; height: 100%; object-fit: cover; }
 .hero__bg::after {
   content: ''; position: absolute; inset: 0;
@@ -294,7 +295,7 @@ body.nav-open { overflow: hidden; }
   letter-spacing: -0.01em; transition: border-color var(--t), color var(--t), transform var(--t), box-shadow var(--t);
 }
 .logos__cell:hover { border-color: var(--accent-line); color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
-.logos__cell img { max-height: 34px; width: auto; object-fit: contain; background: none; }
+.logos__cell img { max-height: 48px; max-width: 150px; width: auto; height: auto; object-fit: contain; background: none; }
 .logos__more { text-align: center; color: var(--ink-500); font-size: .86rem; margin-top: 1.5rem; max-width: 70ch; margin-inline: auto; }
 
 /* ---------- grids & cards ---------- */
@@ -363,6 +364,7 @@ a.cell:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border
 }
 .pcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent-line); }
 .pcard__media { aspect-ratio: 16/10; overflow: hidden; }
+.pcard__media picture { display: block; width: 100%; height: 100%; }
 .pcard__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 600ms cubic-bezier(0.2, 0.7, 0.3, 1); }
 .pcard:hover .pcard__media img { transform: scale(1.045); }
 .pcard__body { padding: 1.35rem 1.4rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
@@ -604,6 +606,54 @@ a.cell:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border
 .stack > * + * { margin-top: 1.25rem; }
 .flexrow { display: flex; flex-wrap: wrap; gap: .8rem; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- media banner (site photography with caption) ---------- */
+.mbanner { position: relative; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+.mbanner picture { display: block; }
+.mbanner img { display: block; width: 100%; aspect-ratio: 16 / 8.5; object-fit: cover; }
+.mbanner figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 2.4rem 1.3rem .9rem;
+  background: linear-gradient(transparent, rgba(18, 26, 23, .78));
+  color: #f4efe6; font-size: .84rem; letter-spacing: .01em;
+}
+@media (max-width: 700px) {
+  .mbanner img { aspect-ratio: 16 / 10.5; }
+  .mbanner figcaption { font-size: .76rem; }
+}
+
+/* ---------- locations (PAN-India coverage) ---------- */
+.loc__zone { font-size: 1.02rem; color: var(--ink-900); margin-bottom: 1rem; border-left: 3px solid var(--accent); padding-left: .65rem; }
+.loc__grid { display: grid; gap: .8rem; grid-template-columns: 1fr; }
+@media (min-width: 560px) { .loc__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .loc__grid { grid-template-columns: repeat(3, 1fr); } }
+.loc__card {
+  display: flex; flex-direction: column; gap: .3rem; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1.05rem 1.15rem;
+  transition: border-color var(--t), transform var(--t), box-shadow var(--t);
+}
+.loc__card:hover { border-color: var(--accent-line); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.loc__name { font-family: var(--f-head); font-weight: 600; color: var(--ink-900); font-size: 1.08rem; letter-spacing: -0.01em; }
+.loc__meta { color: var(--ink-500); font-size: .84rem; }
+.loc__dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #1f8a4c; margin-left: .4rem; }
+.loc__dot--inline { margin: 0 .2rem; }
+.loc__live {
+  margin-top: 1.15rem; display: inline-flex; align-items: center; gap: .5rem;
+  background: #e7f3ec; color: #166b3a; font-weight: 600; font-size: .87rem;
+  padding: .55rem 1rem; border-radius: 100px;
+}
+.loc__live .ico { width: 16px; height: 16px; }
+
+/* ---------- coverage chips (home) ---------- */
+.cov__chips { display: flex; flex-wrap: wrap; gap: .55rem; }
+.cov__chip {
+  padding: .5rem .95rem; border-radius: 100px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink-700); font-weight: 600; font-size: .87rem;
+  transition: border-color var(--t), color var(--t), transform var(--t);
+}
+.cov__chip:hover { border-color: var(--accent-line); color: var(--accent); transform: translateY(-1px); }
+.cov__chip--active { border-color: #1f8a4c33; background: #e7f3ec; color: #166b3a; }
+
+.mb-1 { margin-bottom: 1rem; } .mb-2 { margin-bottom: 2rem; }
 
 /* ---------- print ---------- */
 @media print {
