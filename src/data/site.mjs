@@ -36,8 +36,11 @@ export const site = {
     'Jabalpur',
     'Mehsana',
   ],
-  // Database-free PHP mailer included in the static deployment package.
-  formEndpoint: '/send-mail.php',
+  // Contact form endpoint. This site runs on Vercel (static hosting), so a PHP
+  // mailer cannot execute. Leave '' and the form opens a pre-filled email to
+  // spaces@trionest.in (nothing is lost). To submit over HTTPS instead, put a
+  // Formspree or Web3Forms endpoint URL here.
+  formEndpoint: '',
   social: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/trionest-spaces/', icon: 'linkedin' },
   ],

@@ -22,7 +22,15 @@ function walk(dir, out = []) {
 }
 
 const htmlFiles = walk(ROOT).filter((f) => f.endsWith('.html'));
-const js = readFileSync(join(ROOT, 'assets/js/main.js'), 'utf8');
+
+/* The build fingerprints assets (style.<hash>.css, main.<hash>.js) so the
+   immutable cache can never serve stale files — locate them by pattern. */
+const findAsset = (dir, base, ext) => {
+  const hit = readdirSync(join(ROOT, dir)).find((f) => f.startsWith(`${base}.`) && f.endsWith(ext));
+  return join(ROOT, dir, hit || `${base}${ext}`);
+};
+
+const js = readFileSync(findAsset('assets/js', 'main', '.js'), 'utf8');
 const rel = (f) => '/' + f.slice(ROOT.length + 1).replace(/\\/g, '/');
 
 function makeDom(html, url) {
@@ -203,7 +211,7 @@ for (const file of htmlFiles) {
    phone / desktop" symptoms cannot be caught by jsdom (no layout engine), so
    they are asserted against the stylesheet source instead.
    ========================================================================== */
-const css = readFileSync(join(ROOT, 'assets/css/style.css'), 'utf8');
+const css = readFileSync(findAsset('assets/css', 'style', '.css'), 'utf8');
 
 const cssChecks = [
   ['balanced braces', (css.match(/{/g) || []).length === (css.match(/}/g) || []).length],

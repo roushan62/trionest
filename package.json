@@ -1,29 +1,23 @@
 {
   "name": "trionest-spaces",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
-  "description": "TrioNest Spaces \u2014 static corporate website (HTML/CSS/vanilla JS, zero runtime dependencies)",
+  "description": "TrioNest Spaces — static corporate website (HTML/CSS/vanilla JS, zero runtime dependencies)",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "images": "python3 tools/gen-images.py",
-    "prepare-images": "bash tools/prepare-images.sh",
-    "optimize-images": "node tools/optimize-images.mjs",
-    "logos": "node tools/render-client-logos.mjs",
     "serve": "node build.mjs && node tools/serve.mjs",
     "dev": "node tools/serve.mjs",
     "check": "node build.mjs && node tools/check.mjs",
-    "deploy": "node build.mjs && echo '\\n\u2705 Build complete! Upload the dist/ folder to Hostinger public_html/.\\nSee deploy/HOSTINGER.md for detailed instructions.'",
     "smoke": "node build.mjs && node tools/smoke.mjs",
     "audit": "node build.mjs && node tools/audit.mjs",
-    "qa": "node build.mjs && node tools/check.mjs && node tools/audit.mjs && node tools/smoke.mjs"
+    "qa": "node build.mjs && node tools/check.mjs && node tools/audit.mjs && node tools/smoke.mjs",
+    "deploy": "npm run build && npx vercel --prod"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
-    "@resvg/resvg-js": "^2.6.2",
-    "jsdom": "^30.0.1",
-    "playwright": "^1.49.0"
+    "jsdom": "^30.0.1"
   }
 }
