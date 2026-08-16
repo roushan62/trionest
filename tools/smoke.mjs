@@ -1,12 +1,15 @@
 /* DOM-level smoke test for the built site (jsdom).
    Loads dist/index.html, runs main.js, and asserts that the
    progressive-enhancement layer boots without runtime errors. */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const htmlPath = `${ROOT}dist/index.html`;
-const jsPath = `${ROOT}dist/assets/js/main.js`;
+/* The build fingerprints main.js (main.<hash>.js) — locate it by pattern. */
+const jsName =
+  readdirSync(`${ROOT}dist/assets/js`).find((f) => f.startsWith('main.') && f.endsWith('.js')) || 'main.js';
+const jsPath = `${ROOT}dist/assets/js/${jsName}`;
 
 if (!existsSync(htmlPath)) {
   console.error('✗ dist/index.html missing — run `npm run build` first.');

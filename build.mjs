@@ -2,9 +2,12 @@
 /**
  * TrioNest Spaces — static site build.
  * Outputs plain HTML/CSS/JS to /dist. No runtime server, no framework.
- * Deploy: GitHub Pages (dist/) or upload dist/* to Hostinger public_html.
+ * Deploy: push to `main` — Vercel builds this script and serves dist/.
+ * CSS and JS are content-hashed (style.<hash>.css, main.<hash>.js) so the
+ * 1-year immutable cache never serves a stale stylesheet after a deploy.
  */
-import { mkdirSync, writeFileSync, readFileSync, cpSync, rmSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, cpSync, rmSync, readdirSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -84,8 +87,6 @@ write('/404.html', notFound);
 
 /* ---------------------------------------------------------------- assets */
 cpSync(join(__dirname, 'src/assets'), join(DIST, 'assets'), { recursive: true });
-// Tiny database-free contact mailer for shared hosts such as Hostinger.
-cpSync(join(__dirname, 'src/send-mail.php'), join(DIST, 'send-mail.php'));
 
 /* Minify the stylesheet in dist only — the src copy stays human-readable */
 function minifyCSS(css) {
@@ -96,13 +97,41 @@ function minifyCSS(css) {
     .replace(/;}/g, '}')
     .trim();
 }
-const cssOut = join(DIST, 'assets/css/style.css');
+
+/* Content hash: each deploy gets fresh filenames, so the `immutable` cache
+   header in vercel.json can never serve yesterday's CSS/JS. */
+const digest = (str) => createHash('sha256').update(str).digest('hex').slice(0, 10);
 const cssKb = (b) => (b / 1024).toFixed(1) + 'KB';
-const cssSrc = readFileSync(cssOut, 'utf8');
-writeFileSync(cssOut, minifyCSS(cssSrc));
-console.log(
-  `✓ css minified ${cssKb(Buffer.byteLength(cssSrc))} → ${cssKb(statSync(cssOut).size)}`,
-);
+
+const cssSrc = readFileSync(join(DIST, 'assets/css/style.css'), 'utf8');
+const cssFile = `style.${digest(minifyCSS(cssSrc))}.css`;
+writeFileSync(join(DIST, 'assets/css', cssFile), minifyCSS(cssSrc));
+rmSync(join(DIST, 'assets/css/style.css'));
+console.log(`✓ css minified ${cssKb(Buffer.byteLength(cssSrc))} → ${cssKb(statSync(join(DIST, 'assets/css', cssFile)).size)} → ${cssFile}`);
+
+const jsSrc = readFileSync(join(DIST, 'assets/js/main.js'), 'utf8');
+const jsFile = `main.${digest(jsSrc)}.js`;
+writeFileSync(join(DIST, 'assets/js', jsFile), jsSrc);
+rmSync(join(DIST, 'assets/js/main.js'));
+
+/* Point every generated page at the hashed CSS/JS files */
+function rewritePages(dir) {
+  for (const f of readdirSync(dir)) {
+    const p = join(dir, f);
+    if (statSync(p).isDirectory()) rewritePages(p);
+    else if (f.endsWith('.html')) {
+      const html = readFileSync(p, 'utf8');
+      writeFileSync(
+        p,
+        html
+          .replaceAll('/assets/css/style.css', `/assets/css/${cssFile}`)
+          .replaceAll('/assets/js/main.js', `/assets/js/${jsFile}`),
+      );
+    }
+  }
+}
+rewritePages(DIST);
+console.log(`✓ assets fingerprinted: ${cssFile}, ${jsFile}`);
 
 /* ---------------------------------------------------------------- sitemap */
 const today = new Date().toISOString().slice(0, 10);
@@ -143,159 +172,6 @@ writeFileSync(
 Allow: /
 
 Sitemap: ${site.url}/sitemap.xml
-`,
-);
-
-/* GitHub Pages: don't run Jekyll over the output */
-writeFileSync(join(DIST, '.nojekyll'), '');
-
-/* Hostinger/Apache: pretty URLs, 404 page, light caching */
-writeFileSync(
-  join(DIST, '.htaccess'),
-  `# TrioNest Spaces — Hostinger/Apache hosting config
-# Performance optimised: compression, caching, security headers
-
-# ---------- Error pages ----------
-ErrorDocument 404 /404.html
-
-# ---------- Prevent directory listing ----------
-Options -Indexes
-
-# ---------- Prevent access to hidden files ----------
-<FilesMatch "^\\.">
-  Order allow,deny
-  Deny from all
-</FilesMatch>
-<FilesMatch "^\\.htaccess">
-  Order allow,deny
-  Deny from all
-</FilesMatch>
-
-# ---------- Pretty URLs ----------
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
-
-  # Force HTTPS (uncomment when SSL is active)
-  # RewriteCond %{HTTPS} off
-  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-  # Force www (uncomment if needed)
-  # RewriteCond %{HTTP_HOST} !^www\\. [NC]
-  # RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [L,R=301]
-
-  # Serve /path as /path/index.html without a redirect loop
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{REQUEST_FILENAME}/index.html -f
-  RewriteRule ^(.*)$ /$1/index.html [L]
-
-  # Remove trailing slash from non-directory URLs
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)/$ /$1 [L,R=301]
-</IfModule>
-
-# ---------- Gzip/Brotli compression ----------
-<IfModule mod_deflate.c>
-  # Compress HTML, CSS, JavaScript, SVG, JSON, XML
-  AddOutputFilterByType DEFLATE text/html
-  AddOutputFilterByType DEFLATE text/css
-  AddOutputFilterByType DEFLATE application/javascript
-  AddOutputFilterByType DEFLATE text/javascript
-  AddOutputFilterByType DEFLATE application/json
-  AddOutputFilterByType DEFLATE application/xml
-  AddOutputFilterByType DEFLATE text/xml
-  AddOutputFilterByType DEFLATE image/svg+xml
-  AddOutputFilterByType DEFLATE text/plain
-
-  # Remove browser bugs
-  BrowserMatch ^Mozilla/4 gzip-only-text/html
-  BrowserMatch ^Mozilla/4\\.0[678] no-gzip
-  BrowserMatch \\bMSIE !no-gzip !gzip-only-text/html
-</IfModule>
-
-# ---------- Browser caching ----------
-<IfModule mod_expires.c>
-  ExpiresActive On
-
-  # HTML: short cache
-  ExpiresByType text/html "access plus 1 hour"
-
-  # CSS & JavaScript: long cache (hashed filenames would allow longer)
-  ExpiresByType text/css "access plus 1 year"
-  ExpiresByType application/javascript "access plus 1 year"
-  ExpiresByType text/javascript "access plus 1 year"
-
-  # Images: long cache
-  ExpiresByType image/jpeg "access plus 1 year"
-  ExpiresByType image/jpg "access plus 1 year"
-  ExpiresByType image/png "access plus 1 year"
-  ExpiresByType image/gif "access plus 1 year"
-  ExpiresByType image/webp "access plus 1 year"
-  ExpiresByType image/svg+xml "access plus 1 year"
-  ExpiresByType image/x-icon "access plus 1 year"
-  ExpiresByType image/vnd.microsoft.icon "access plus 1 year"
-
-  # Fonts: long cache
-  ExpiresByType font/woff2 "access plus 1 year"
-  ExpiresByType font/woff "access plus 1 year"
-  ExpiresByType font/ttf "access plus 1 year"
-  ExpiresByType application/font-woff2 "access plus 1 year"
-  ExpiresByType application/font-woff "access plus 1 year"
-
-  # XML and TXT
-  ExpiresByType application/xml "access plus 1 week"
-  ExpiresByType text/xml "access plus 1 week"
-  ExpiresByType text/plain "access plus 1 week"
-</IfModule>
-
-# ---------- Cache-Control headers for static assets ----------
-<IfModule mod_headers.c>
-  <FilesMatch "\\.(css|js)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
-  </FilesMatch>
-  <FilesMatch "\\.(jpg|jpeg|png|gif|webp|svg|ico)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
-  </FilesMatch>
-  <FilesMatch "\\.(woff2|woff|ttf)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
-  </FilesMatch>
-  <FilesMatch "\\.(html|htm)$">
-    Header set Cache-Control "public, max-age=3600, must-revalidate"
-  </FilesMatch>
-
-  # ---------- Security headers ----------
-  Header set X-Content-Type-Options "nosniff"
-  Header set Referrer-Policy "strict-origin-when-cross-origin"
-  Header set X-Frame-Options "SAMEORIGIN"
-  Header set X-XSS-Protection "1; mode=block"
-  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
-
-  # Remove server signature
-  Header unset X-Powered-By
-  Header unset Server
-</IfModule>
-
-# ---------- Prevent MIME type sniffing ----------
-<IfModule mod_mime.c>
-  AddType application/javascript .js
-  AddType text/css .css
-  AddType image/svg+xml .svg
-  AddType font/woff2 .woff2
-  AddType font/woff .woff
-</IfModule>
-
-# ---------- Default charset ----------
-AddDefaultCharset UTF-8
-
-# ---------- Prevent hotlinking of images ----------
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteCond %{HTTP_REFERER} !^$
-  RewriteCond %{HTTP_REFERER} !^https?://(www\\.)?trionest\\.in [NC]
-  RewriteCond %{HTTP_REFERER} !^https?://(www\\.)?localhost [NC]
-  RewriteRule \\.(jpg|jpeg|png|gif|webp|svg)$ - [F,NC,L]
-</IfModule>
 `,
 );
 

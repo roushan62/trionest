@@ -9,113 +9,54 @@ Includes full PAN-India SEO coverage: an index plus 32 state/UT landing pages un
 unique market-specific content, city lists, FAQs and `Service` + `FAQPage` +
 `BreadcrumbList` schema.
 
-Built for Hostinger shared hosting: the `dist/` folder is plain HTML/CSS/vanilla JS with
-no Node server, database or serverless functions. A single dependency-free PHP mailer is
-included only to deliver contact-form submissions to `spaces@trionest.in`.
+Deployed on **Vercel** (static hosting): push to `main` and Vercel runs `npm run build`
+and serves `dist/`. No Node server, no database, no serverless functions.
 
 ---
 
 ## Quick start
 
 ```bash
-npm run build            # build the static site into dist/ (minifies CSS too)
-npm run serve            # build + preview at http://localhost:4321
-npm run check            # build + run the QA checker (links | alt | meta | schema | headings | webp)
-npm run audit            # build + deep DOM/CSS audit (nav, drawer, ARIA, ids, labels, responsive rules)
-npm run smoke            # build + DOM smoke test of the JS enhancement layer (jsdom)
-npm run qa               # build + check + audit + smoke — run this before every deploy
-npm run prepare-images   # resize + recompress JPEGs and generate WebP twins (needs ImageMagick)
-npm run logos            # render SVG client logos to PNG previews in tmp/ for review
-npm run images           # regenerate brand assets and photo placeholders
-bash tools/import-logos.sh  # re-import real client logos from image-search/ into src/assets/clients/
+npm install           # devDependencies only (jsdom, for the QA tools)
+npm run build         # build the static site into dist/ (minifies CSS, hashes assets)
+npm run serve         # build + preview at http://localhost:4321
+npm run check         # build + run the QA checker (links | alt | meta | schema | headings | webp)
+npm run audit         # build + deep DOM/CSS audit (nav, drawer, ARIA, ids, labels, responsive rules)
+npm run smoke         # build + DOM smoke test of the JS enhancement layer (jsdom)
+npm run qa            # build + check + audit + smoke — run this before every deploy
+npm run deploy        # build + deploy straight to Vercel (`npx vercel --prod`)
 ```
 
-Requires Node 18+. `npm run images` additionally needs Python 3 with Pillow
-(`pip install pillow`) — you only need it if you want to regenerate placeholders.
-
-There are **no npm dependencies to install** for the build itself. `npm run build` works on a
-clean checkout. `npm run smoke` needs the `jsdom` devDependency (`npm i`).
+Requires Node 18+. The build itself has **no dependencies** — `npm run build` works on a
+clean checkout.
 
 ---
 
-## Cross-device fixes (v1.3)
+## Deploying (Vercel)
 
-The header, navigation and every responsive grid were rebuilt to remove the layout
-glitches that showed up on phones and on wide desktops.
+The repository is connected to Vercel through the GitHub integration:
 
-* **Mobile menu no longer opens half way.** The drawer used to be a `position: fixed`
-  panel *inside* `<header class="head">` — but `.head` applies `backdrop-filter`, and a
-  backdrop-filter makes an element the containing block for its fixed descendants. The
-  panel was therefore clipped to the header box. The drawer is now rendered at body level
-  (`#mobile-nav`, see `drawerMarkup()` in `src/lib/layout.mjs`) as a full-height sheet with
-  a scrim, focus trap, Escape-to-close, and auto-close on navigate or breakpoint change.
-* **All 7 nav sections + 21 sub-pages are reachable on every device.** Each dropdown now
-  also carries an "All <section>" link so the parent index page is never orphaned, and the
-  right-most dropdowns flip their alignment so they cannot spill off-screen.
-* **Desktop dropdowns work on click and keyboard**, not hover only.
-* **`overflow-x: clip` instead of `hidden` on `<body>`** — `hidden` turns the body into a
-  scroll container, which silently breaks `position: sticky` on the header.
-* **Every multi-column grid uses `minmax(0, 1fr)`.** `1fr` defaults to `min-content`
-  minimum, so any long word or wide image pushed columns past the viewport. This was the
-  root cause of the "formatting breaks" reports on both phone and desktop.
-* **Anchor links clear the sticky header** (`scroll-padding-top` + JS offset), and
-  `content-visibility: auto` was removed from `.sec` because it made anchor targets and
-  scroll restoration land in the wrong place.
-* **`[hidden] { display: none !important }`** — without it the project filter could not
-  hide flex cards, so filtering appeared to do nothing.
-* Stat figures render server-side (correct with JS off), stacked key/value tables below
-  560px, 16px form inputs on mobile (no iOS zoom-on-focus), 44–48px touch targets,
-  safe-area insets for the floating buttons, and a scroll-reveal failsafe so content can
-  never stay invisible.
-* **`npm run qa`** runs the full gate: build → link/meta check → deep DOM + CSS audit
-  (`tools/audit.mjs`, 75 pages) → JS smoke test.
+1. **Push to `main`** — Vercel automatically runs `npm run build` and promotes the
+   result to Production (`trionest.vercel.app`).
+2. Or deploy manually from the repo root: `npm run deploy` (needs the Vercel CLI
+   logged in once: `npx vercel login`).
 
-## Redesign layer (v1.2)
+### Why updates sometimes look "stuck" on the main domain
 
-* **Real client logos** — official brand logos for all 22 published clients, imported from
-  brand sources via `tools/import-logos.sh` into `src/assets/clients/*.webp`
-  (Fleetx and Centrum keep the rendered SVG wordmark where no clean source was available).
-* **Client-office showcase** — a homepage section pairing each delivered space with the
-  client's real logo, AI-generated interior visual (styled per brand, referenced from the
-  site's real photography) and the verified project cities.
-* **Motion system** — scroll-reveal with stagger, animated stat counters, seamless logo
-  marquee, hero ticker, scroll progress bar, cursor glow, card tilt and back-to-top — all
-  vanilla JS/CSS, GPU-friendly, and disabled under `prefers-reduced-motion`.
-* **New environments imagery** — six generated corporate interior scenes (reception,
-  workstations, boardroom, cafe, cabin, training room) used on the About page and the
-  Civil & Interiors service page.
+`vercel.json` sends `Cache-Control: public, max-age=31536000, immutable` for everything
+under `/assets/`. That is correct only if filenames change on every deploy — and the
+build now guarantees it: CSS and JS are **content-hashed** at build time
+(`style.<hash>.css`, `main.<hash>.js`) and every page references the hashed names.
 
-## Repository layout
+Before this fix, `style.css` / `main.js` kept their names across deploys, so browsers
+and the Vercel CDN happily served the *old* cached files for up to a year while the
+HTML was new — the site looked like the previous version on the main domain even
+though preview URLs showed the update. Hashed filenames make the immutable cache safe:
+every deploy references fresh files, so everyone gets the update immediately.
 
-```
-build.mjs                 Build script — writes every page into dist/
-src/
-  data/                   ← ALL CONTENT LIVES HERE (edit these, not the HTML)
-    site.mjs              Company facts, stats, nav, 6-stage process, "why us"
-    services.mjs          4 service lines with full scope copy
-    industries.mjs        7 sector pages with copy + FAQs
-    locations.mjs         32 state/UT pages: cities, sectors, market notes, FAQs
-    projects.mjs          Project list + case-study fields
-    clients.mjs           Client logo wall (grouped by sector) + testimonials
-    blog.mjs              6 full-length insight articles
-  lib/
-    layout.mjs            Page shell: head, header, nav, breadcrumbs, footer, icons
-    parts.mjs             Reusable blocks: stat bar, logo strip, cards, forms
-  pages/                  Page templates (home, company, services, industries, …)
-  send-mail.php           Database-free Hostinger contact-form mailer
-  assets/
-    css/style.css         Design system (one file, CSS custom properties)
-    js/main.js            Nav, filters, carousel, form handling (no libraries)
-    brand/                Logo, favicon, OG image
-    img/                  Photography — placeholders, replace with real photos
-    clients/              Client logos
-    docs/                 Company profile PDF, sample QA documents
-tools/
-  gen-images.py           Generates brand assets + on-brand photo placeholders
-  serve.mjs               Local static preview server
-  check.mjs               QA checker — run before every deploy
-dist/                     Build output (gitignored) — this is what you upload
-```
+If a page still looks old after a deploy, do one hard refresh (`Ctrl+Shift+R` / `Cmd+Shift+R`)
+and confirm in the Vercel dashboard that the latest commit on `main` is the **Current
+Production** deployment (Settings → Git → Production Branch should be `main`).
 
 ---
 
@@ -128,6 +69,7 @@ Everything is data-driven. **You never need to touch HTML to change copy.**
 | Phone, email, address, stats, cities | `src/data/site.mjs` |
 | Navigation menu | `nav` in `src/data/site.mjs` |
 | The 6 process stages and their deliverables | `processStages` in `src/data/site.mjs` |
+| Contact form endpoint (Formspree/Web3Forms URL) | `formEndpoint` in `src/data/site.mjs` |
 | Service scope copy | `src/data/services.mjs` |
 | Sector copy and FAQs | `src/data/industries.mjs` |
 | State / city coverage pages | `src/data/locations.mjs` |
@@ -148,11 +90,11 @@ missing, a clearly-styled placeholder block appears instead of fabricated conten
 Search the site for those blocks, or work through this list.
 
 ### 1. Verify the contact form (required)
-The bundled `send-mail.php` validates submissions and sends them directly to
-`spaces@trionest.in` using Hostinger's PHP `mail()` transport. It stores no data and
-needs no database, API key or third-party form account. After deployment, submit one
-test enquiry and confirm both Inbox and Spam. If Hostinger has outbound mail disabled,
-enable PHP mail in hPanel or ask Hostinger support to enable it for the domain.
+Vercel is static hosting, so the old PHP mailer cannot run. The form now opens a
+**pre-filled email to `spaces@trionest.in`** with every field included — no lead is
+lost. If you prefer HTTPS form submission, sign up for a free Formspree or Web3Forms
+account and paste its endpoint into `formEndpoint` in `src/data/site.mjs`. After
+deploying, submit one test enquiry and confirm it arrives.
 
 ### 2. Brand logo — already set
 `src/assets/brand/logo.svg` and `favicon.svg` use the official green impossible-triangle
@@ -167,8 +109,7 @@ mark. If the live-site accent ever changes, it is **one line** in
 `src/assets/img/` holds photorealistic site photography matched to each page's topic
 (hero office, per-service shots, per-project shots, plus process / QC / toolbox-talk /
 team photos wired into `/process/`, `/quality-safety/` and `/team/`). Swap in real
-TrioNest project photography with the same filenames whenever a real shoot is done,
-then re-run `npm run prepare-images` to regenerate the resized JPEGs + WebP twins.
+TrioNest project photography with the same filenames whenever a real shoot is done.
 
 ### 5. Client logos — currently brand-accurate SVG wordmarks
 `src/assets/clients/*.svg` are faithful wordmark reproductions (real brand colours and
@@ -197,26 +138,43 @@ descriptions, correct heading hierarchy, sitemap accuracy, no lorem ipsum.
 
 ---
 
-## Deploying
+## Repository layout
 
-### GitHub Pages
-A workflow at `.github/workflows/deploy.yml` builds and deploys automatically.
-In **Settings → Pages**, set Source to **GitHub Actions**. Using a custom domain?
-Add it in the same screen and set `CNAME` content in the workflow.
-
-### Hostinger (or any shared host)
-```bash
-npm run build
 ```
-Upload the **contents** of `dist/` (not the folder itself) into `public_html/` via
-File Manager or FTP. `.htaccess` is included and handles clean URLs, the 404 page,
-compression and cache headers.
+build.mjs                 Build script — writes every page into dist/ (CSS/JS fingerprinted)
+vercel.json               Vercel config: build command, output dir, cache & security headers
+src/
+  data/                   ← ALL CONTENT LIVES HERE (edit these, not the HTML)
+    site.mjs              Company facts, stats, nav, 6-stage process, "why us"
+    services.mjs          4 service lines with full scope copy
+    industries.mjs        7 sector pages with copy + FAQs
+    locations.mjs         32 state/UT pages: cities, sectors, market notes, FAQs
+    projects.mjs          Project list + case-study fields
+    clients.mjs           Client logo wall (grouped by sector) + testimonials
+    blog.mjs              6 full-length insight articles
+  lib/
+    layout.mjs            Page shell: head, header, nav, breadcrumbs, footer, icons
+    parts.mjs             Reusable blocks: stat bar, logo strip, cards, forms
+  pages/                  Page templates (home, company, services, industries, …)
+  assets/
+    css/style.css         Design system (one file, CSS custom properties)
+    js/main.js            Nav, filters, carousel, form handling (no libraries)
+    brand/                Logo, favicon, OG image
+    img/                  Photography — placeholders, replace with real photos
+    clients/              Client logos
+    docs/                 Company profile PDF, sample QA documents
+tools/
+  serve.mjs               Local static preview server
+  check.mjs               QA checker — run before every deploy
+  audit.mjs               Deep DOM/CSS audit (75 pages)
+  smoke.mjs               DOM smoke test of the JS enhancement layer
+dist/                     Build output (gitignored) — what Vercel serves
+```
 
-The build is fully portable: open `dist/index.html` behind any static server and it
-behaves identically. All internal links are root-relative (`/about/`), so the site must
-be served from a domain root — not from a subfolder.
+---
 
-### Post-launch
+## Post-launch SEO
+
 - Submit `https://trionest.in/sitemap.xml` in Google Search Console (74 URLs, incl. every state page).
 - Claim/complete the Google Business Profile, then embed reviews on `/clients/`.
 - Create or verify state/city business listings (Bing Places, Justdial, IndiaMART, Sulekha) for local SEO reinforcement.

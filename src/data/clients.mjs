@@ -1,6 +1,6 @@
 /* Client names already public on trionest.in. No additions without written permission.
-   Logos: real brand logos imported via tools/import-logos.sh live in
-   src/assets/clients/<logo>.webp (fleetx & centrum keep the rendered SVG wordmark).
+   Logos: real brand logos live in src/assets/clients/<logo>.webp
+   (fleetx & centrum keep the rendered SVG wordmark).
    Trademarks belong to their respective owners. */
 
 export const clientGroups = [
