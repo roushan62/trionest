@@ -1,7 +1,7 @@
 /* ==========================================================================
    TrioNest Spaces — main.js (vanilla JS, zero dependencies)
    Header, mobile nav, reveal-on-scroll, counters, filters, accordions,
-   contact form (fetch → mail/send.php, mailto fallback), URL prefill,
+   contact form (pre-filled email enquiry), URL prefill,
    floating widgets, footer year.
    ========================================================================== */
 (function () {
@@ -229,23 +229,9 @@
         restore();
       }
 
-      fetch('mail/send.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(payload).toString()
-      })
-        .then(function (res) { return res.json().catch(function () { return { ok: false, error: 'Server response not understood.' }; }); })
-        .then(function (json) {
-          if (json && json.ok) {
-            form.reset();
-            showStatus('ok', '✓ Thank you, ' + (payload.name || '') + '! Your enquiry has been sent. Our team will call you back within 24 hours. For urgent needs, call <a href="tel:+918796575719">+91 87965 75719</a>.');
-          } else {
-            mailtoFallback();
-          }
-        })
-        .catch(function () {
-          mailtoFallback();
-        });
+      // Vercel hosts this as a static site, so open a complete pre-filled
+      // enquiry in the visitor's email app instead of calling an unsupported PHP URL.
+      mailtoFallback();
     });
   }
 
