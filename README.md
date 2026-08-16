@@ -1,7 +1,31 @@
 # TrioNest Spaces — Website
 
-Production-grade static website for **TrioNest Spaces** — *One Partner. Three Disciplines.*
-Corporate interiors + electrical contracting + HVAC engineering.
+## 🚀 Ready to upload? Use the `website/` folder
+
+The **`website/`** folder is a complete, standalone website — **pure HTML + CSS +
+vanilla JS + one PHP mailer** — with **no build step and no dependencies**. Upload
+its contents straight to **Hostinger's `public_html`** (or any static host) and the
+site runs as-is, including the contact form.
+
+> ⚠️ **Upload the *contents* of `website/` into `public_html`** — don't create an
+> extra `website` folder on the server, or the site will open at `yoursite.com/website/`.
+
+See **`website/README-HOSTINGER.md`** for the step-by-step Hostinger guide
+(ZIP → File Manager → upload → set your email in `mail/send.php` → done).
+
+Pages: `index` · `about` · `services` · `projects` · `industries` · `contact` + `404`.
+Theme: light & bright, glass (glassmorphism) surfaces, accent palette drawn from the
+`logo.png` brand mark (deep blue `#04458E`, cyan `#01C7E7`, with red/yellow/green
+echoes). All contact details use **+91 87965 75719** (call/WhatsApp) and
+**spaces@trionest.in**.
+
+---
+
+## Legacy build (Vercel static generator)
+
+The rest of this repo is the original production-grade static-site generator for
+**TrioNest Spaces** — *One Partner. Three Disciplines.* Corporate interiors +
+electrical contracting + HVAC engineering.
 
 **75 pages. Zero runtime dependencies. Pure HTML/CSS/vanilla JS output.**
 Includes full PAN-India SEO coverage: an index plus 32 state/UT landing pages under
