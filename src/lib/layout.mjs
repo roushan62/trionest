@@ -42,33 +42,113 @@ export const icon = (name) => {
   return `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${p}</svg>`;
 };
 
+const chev = `<svg class="nav__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+const slug = (s) =>
+  String(s)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+const isCurrent = (item, current) =>
+  current === item.href ||
+  (item.href !== '/' && !item.children && current.startsWith(item.href));
+
+const hasActiveChild = (item, current) =>
+  !!item.children && item.children.some((c) => current === c.href || current.startsWith(c.href));
+
+/* ---------- desktop navigation (lives inside the sticky header) ---------- */
 const navMarkup = (current) =>
   nav
     .map((item) => {
-      const active = current === item.href || (item.href !== '/' && current.startsWith(item.href) && !item.children)
-        ? ' aria-current="page"'
-        : '';
+      const active = isCurrent(item, current) ? ' aria-current="page"' : '';
       if (!item.children) {
         return `<li class="nav__item"><a class="nav__link" href="${item.href}"${active}>${esc(item.label)}</a></li>`;
       }
-      const childActive = item.children.some((c) => c.href === current);
+      const childActive = hasActiveChild(item, current) || current === item.href;
+      const id = `sub-${slug(item.label)}`;
       return `<li class="nav__item nav__item--has-sub">
-        <button class="nav__link nav__toggle" type="button" aria-expanded="false" aria-controls="sub-${esc(
-          item.label.toLowerCase(),
-        )}"${childActive ? ' data-active="true"' : ''}>${esc(item.label)}<svg class="nav__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        <ul class="subnav" id="sub-${esc(item.label.toLowerCase())}">
-          ${item.children
-            .map(
-              (c) =>
-                `<li><a class="subnav__link" href="${c.href}"${
-                  c.href === current ? ' aria-current="page"' : ''
-                }>${esc(c.label)}</a></li>`,
-            )
-            .join('')}
-        </ul>
+        <button class="nav__link nav__toggle" type="button" aria-expanded="false" aria-controls="${id}"${
+          childActive ? ' data-active="true"' : ''
+        }><span>${esc(item.label)}</span>${chev}</button>
+        <div class="subnav" id="${id}">
+          <ul class="subnav__list">
+            <li><a class="subnav__link subnav__link--all" href="${item.href}"${
+              current === item.href ? ' aria-current="page"' : ''
+            }>All ${esc(item.label)} ${icon('arrow')}</a></li>
+            ${item.children
+              .map(
+                (c) =>
+                  `<li><a class="subnav__link" href="${c.href}"${
+                    c.href === current ? ' aria-current="page"' : ''
+                  }>${esc(c.label)}</a></li>`,
+              )
+              .join('')}
+          </ul>
+        </div>
       </li>`;
     })
     .join('');
+
+/* ---------- mobile drawer (rendered at body level, never inside the header) ----------
+   The header uses backdrop-filter, which makes it a containing block for fixed
+   positioning. Keeping the drawer outside the header is what guarantees a
+   full-height, glitch-free panel on every device. */
+const drawerMarkup = (current) => `<div class="drawer" id="mobile-nav" aria-hidden="true">
+  <div class="drawer__scrim" data-nav-close hidden></div>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Site menu" tabindex="-1">
+    <div class="drawer__top">
+      <a class="brandmark" href="/" aria-label="${esc(site.name)} — home">
+        <img src="/assets/brand/logo.svg" alt="${esc(site.name)} logo" width="150" height="34" loading="lazy" decoding="async">
+      </a>
+      <button class="drawer__close" type="button" data-nav-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <nav class="drawer__nav" aria-label="Mobile primary">
+      <ul class="mnav">
+        ${nav
+          .map((item) => {
+            if (!item.children) {
+              return `<li class="mnav__item"><a class="mnav__link" href="${item.href}"${
+                isCurrent(item, current) ? ' aria-current="page"' : ''
+              }>${esc(item.label)}</a></li>`;
+            }
+            const open = hasActiveChild(item, current) || current === item.href;
+            const id = `m-${slug(item.label)}`;
+            return `<li class="mnav__item mnav__item--has-sub">
+              <button class="mnav__link mnav__toggle" type="button" aria-expanded="${open}" aria-controls="${id}">
+                <span>${esc(item.label)}</span>${chev}
+              </button>
+              <div class="msub" id="${id}"${open ? '' : ' hidden'}>
+                <ul>
+                  <li><a class="msub__link" href="${item.href}"${
+                    current === item.href ? ' aria-current="page"' : ''
+                  }>All ${esc(item.label)}</a></li>
+                  ${item.children
+                    .map(
+                      (c) =>
+                        `<li><a class="msub__link" href="${c.href}"${
+                          c.href === current ? ' aria-current="page"' : ''
+                        }>${esc(c.label)}</a></li>`,
+                    )
+                    .join('')}
+                </ul>
+              </div>
+            </li>`;
+          })
+          .join('')}
+      </ul>
+    </nav>
+    <div class="drawer__foot">
+      <a class="btn btn--accent btn--block" href="/contact/">Request proposal ${icon('arrow')}</a>
+      <div class="drawer__contact">
+        <a href="${site.phoneHref}">${icon('phone')}<span>${esc(site.phone)}</span></a>
+        <a href="mailto:${site.email}">${icon('mail')}<span>${esc(site.email)}</span></a>
+      </div>
+    </div>
+  </div>
+</div>`;
 
 export const breadcrumbs = (trail) => {
   if (!trail || !trail.length) return '';
@@ -276,20 +356,17 @@ ${ld}
     </a>
     <nav class="nav" id="nav" aria-label="Primary">
       <ul class="nav__list">${navMarkup(path)}</ul>
-      <div class="nav__mobextra">
-        <a class="btn btn--ghost btn--sm" href="${site.phoneHref}">${icon('phone')} ${esc(site.phone)}</a>
-        <a class="btn btn--accent btn--sm" href="/contact/">Request proposal</a>
-      </div>
     </nav>
     <div class="head__actions">
       <a class="head__phone" href="${site.phoneHref}">${icon('phone')}<span>${esc(site.phone)}</span></a>
-      <a class="btn btn--accent btn--sm" href="/contact/">Request proposal</a>
-      <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+      <a class="btn btn--accent btn--sm head__cta" href="/contact/"><span class="head__cta-full">Request proposal</span><span class="head__cta-short">Enquire</span></a>
+      <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
 </header>
+${drawerMarkup(path)}
 ${crumbs ? breadcrumbs(crumbs) : ''}
 <main id="main">
 ${body}

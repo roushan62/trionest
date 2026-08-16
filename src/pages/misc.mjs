@@ -16,23 +16,25 @@ export const blogIndex = page({
   <p class="lede">Written for the people who commission fit-outs — facilities heads, procurement teams and project sponsors. Specifics, not marketing.</p>
 </div></section>
 
-<section class="postlist">
-  ${posts
-    .map(
-      (p) => `<article class="post"><div class="wrap" style="display:grid;grid-template-columns:inherit;gap:inherit">
-    <div class="post__meta">
-      <span class="post__cat">${esc(p.category)}</span>
-      <span>${esc(p.dateLabel)}</span>
-      <span>${esc(p.readTime)}</span>
-    </div>
-    <div>
-      <h2><a href="/blog/${p.slug}/">${esc(p.title)}</a></h2>
-      <p>${esc(p.excerpt)}</p>
-      <a class="tlink" href="/blog/${p.slug}/">Read the article ${icon('arrow')}</a>
-    </div>
-  </div></article>`,
-    )
-    .join('')}
+<section class="sec postlist">
+  <div class="wrap">
+    ${posts
+      .map(
+        (p) => `<article class="post">
+      <div class="post__meta">
+        <span class="post__cat">${esc(p.category)}</span>
+        <span>${esc(p.dateLabel)}</span>
+        <span>${esc(p.readTime)}</span>
+      </div>
+      <div class="post__body">
+        <h2><a href="/blog/${p.slug}/">${esc(p.title)}</a></h2>
+        <p>${esc(p.excerpt)}</p>
+        <a class="tlink" href="/blog/${p.slug}/">Read the article ${icon('arrow')}</a>
+      </div>
+    </article>`,
+      )
+      .join('')}
+  </div>
 </section>
 
 ${ctaBand({
@@ -154,7 +156,7 @@ export const contact = page({
 
 <section class="sec"><div class="wrap split split--60">
   <div>
-    <h2 style="font-size:1.3rem">Project enquiry</h2>
+    <h2 class="h-sm">Project enquiry</h2>
     ${enquiryForm({ subject: 'Request for proposal — website', id: 'rfp' })}
   </div>
   <div class="stack">
@@ -167,7 +169,7 @@ export const contact = page({
       <div>${icon('pin')}<span><strong>Office</strong>${site.addressLines.map(esc).join('<br>')}</span></div>
       <div>${icon('clock')}<span><strong>Office hours</strong>${esc(site.hours)}</span></div>
       <div>${icon('globe')}<span><strong>Active locations</strong>${esc(site.cities.join(' · '))}</span></div>
-      <div>${icon('pin')}<span><strong>PAN-India coverage</strong>We serve <a href="/locations/" style="color:var(--accent)">every state and union territory</a> — see the city-wise network.</span></div>
+      <div>${icon('pin')}<span><strong>PAN-India coverage</strong>We serve <a class="ilink" href="/locations/">every state and union territory</a> — see the city-wise network.</span></div>
     </div>
 
     <div class="map">
@@ -335,8 +337,8 @@ export const notFound = page({
 <section class="e404"><div class="wrap">
   <div class="code">404</div>
   <h1>That page doesn’t exist.</h1>
-  <p class="lede" style="margin-inline:auto">The link may be out of date, or the page may have moved. Everything on this site is one click from the menu above.</p>
-  <div class="flexrow mt-2" style="justify-content:center">
+  <p class="lede center-block">The link may be out of date, or the page may have moved. Everything on this site is one click from the menu above.</p>
+  <div class="flexrow flexrow--center mt-2">
     <a class="btn btn--accent btn--lg" href="/">Back to home ${icon('arrow')}</a>
     <a class="btn btn--ghost btn--lg" href="/contact/">Contact us</a>
     <a class="btn btn--ghost btn--lg" href="/projects/">See our projects</a>

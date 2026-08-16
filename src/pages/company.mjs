@@ -304,7 +304,7 @@ export const certifications = page({
     'Certification data not yet published',
     'For each item below, add the registration or certificate number, issuing authority and validity date, and upload a copy (redacted where necessary) to src/assets/docs/. Remove any item you do not hold — an accurate short list is worth more than a long list with unverifiable entries.',
   )}
-  <h2 class="mt-3" style="font-size:1.3rem">Registrations, licences and insurance</h2>
+  <h2 class="h-sm mt-3">Registrations, licences and insurance</h2>
   <div class="badges mt-2">
     ${certItems
       .map(
@@ -448,7 +448,7 @@ ${statBar()}
   ${clientGroups
     .map(
       (g) => `<div class="mt-3">
-    <h2 style="font-size:1.15rem;margin-bottom:1rem">${esc(g.sector)}</h2>
+    <h2 class="h-xs mb-1">${esc(g.sector)}</h2>
     <div class="logos__grid">
       ${g.clients
         .map((c) => `<div class="logos__cell" title="${esc(c.name)}">${clientLogo(c)}</div>`)
@@ -516,8 +516,8 @@ export const companyProfile = page({
   </div>
   <div>
     <div class="formcard">
-      <h2 style="font-size:1.2rem">Download the profile</h2>
-      <p class="dim" style="font-size:.92rem">No gate, no form. Take the document to your procurement meeting.</p>
+      <h2 class="h-sm">Download the profile</h2>
+      <p class="dim txt-sm">No gate, no form. Take the document to your procurement meeting.</p>
       ${
         profileReady
           ? `<a class="btn btn--accent btn--lg btn--block mt-1" href="${PROFILE_PDF}" download>${icon(
@@ -525,7 +525,7 @@ export const companyProfile = page({
             )} Download company profile (PDF)</a>
       <p class="form__note">Approximately 3 MB. If you need it with a tailored reference list, email <a href="mailto:${
         site.email
-      }" style="color:var(--accent)">${esc(site.email)}</a>.</p>`
+      }" class="ilink">${esc(site.email)}</a>.</p>`
           : `<a class="btn btn--accent btn--lg btn--block mt-1" href="mailto:${
               site.email
             }?subject=Company%20profile%20request">${icon(
@@ -534,8 +534,8 @@ export const companyProfile = page({
       <p class="form__note">The PDF is being finalised. Email us and we will send the current profile and a project reference list the same working day. Once <code>src/assets/docs/trionest-company-profile.pdf</code> exists, this button becomes a direct download automatically.</p>`
       }
       <hr>
-      <h3 style="font-size:1.02rem">Want it sent with a tailored reference list?</h3>
-      <p class="dim" style="font-size:.9rem">Tell us your sector and we will include the most relevant projects.</p>
+      <h3 class="h-xs">Want it sent with a tailored reference list?</h3>
+      <p class="dim txt-sm">Tell us your sector and we will include the most relevant projects.</p>
       <a class="btn btn--ghost btn--block" href="/contact/">Request a tailored profile</a>
     </div>
   </div>
@@ -584,8 +584,8 @@ export const careers = page({
   </div>
   <div>
     <div class="formcard">
-      <h2 style="font-size:1.15rem">Current openings</h2>
-      <p class="dim" style="font-size:.93rem">We do not have dated vacancies listed at the moment. Applications from experienced candidates in the roles listed are welcome year-round, and we keep strong CVs on file for the next mobilisation.</p>
+      <h2 class="h-xs">Current openings</h2>
+      <p class="dim txt-sm">We do not have dated vacancies listed at the moment. Applications from experienced candidates in the roles listed are welcome year-round, and we keep strong CVs on file for the next mobilisation.</p>
       <a class="btn btn--accent btn--block mt-1" href="mailto:${site.email}?subject=Application%20%E2%80%94%20TrioNest%20Spaces">${icon(
     'mail',
   )} Email your CV</a>

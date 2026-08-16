@@ -53,12 +53,12 @@ ${statBar()}
         .join('')}</select>
     </div>
   </div>
-  <div class="flexrow" style="justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+  <div class="filters__bar">
     <p class="filters__count" id="f-count" role="status" aria-live="polite">${projects.length} projects</p>
     <button class="btn btn--ghost btn--sm" type="button" id="f-reset">Reset filters</button>
   </div>
   <div class="pgrid" id="project-grid">${projects.map(projectCard).join('')}</div>
-  <div class="noresults mt-2" id="f-empty" hidden>No projects match those filters. <button class="tlink" type="button" onclick="document.getElementById('f-reset').click()" style="background:none;border:0;cursor:pointer">Reset filters</button></div>
+  <div class="noresults mt-2" id="f-empty" hidden>No projects match those filters. <button class="tlink tlink--btn" type="button" data-filter-reset>Reset filters</button></div>
 </div></section>
 
 <section class="sec sec--alt"><div class="wrap">
@@ -180,8 +180,8 @@ export const projectPage = (p, all) => {
       </ul>
     </div>
     <div class="mt-2 formcard">
-      <h3 style="font-size:1.05rem">Want the detail?</h3>
-      <p class="dim" style="font-size:.9rem">We can walk a prospective client through this project in detail, including documentation and, where the client permits, a reference call.</p>
+      <h3 class="h-xs">Want the detail?</h3>
+      <p class="dim txt-sm">We can walk a prospective client through this project in detail, including documentation and, where the client permits, a reference call.</p>
       <a class="btn btn--accent btn--block" href="/contact/">Talk to the project team ${icon('arrow')}</a>
     </div>
   </div>

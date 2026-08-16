@@ -157,12 +157,12 @@ export const locationPage = (l) => {
     <div class="tstep__deliv">
       <h3>Where we work in ${esc(l.name)}</h3>
       <ul>${l.cities.map((c) => `<li>${icon('pin')}<span>${esc(c)}</span></li>`).join('')}</ul>
-      <p class="dim" style="font-size:.85rem;margin-top:.75rem">State capital: ${esc(l.capital)}. Other districts are served on a mobilised-site model.</p>
+      <p class="dim txt-xs mt-note">State capital: ${esc(l.capital)}. Other districts are served on a mobilised-site model.</p>
     </div>
     <div class="tstep__deliv mt-2">
       <h3>Typical sectors in ${esc(l.name)}</h3>
       <ul>${focusIndustries
-        .map((i) => `<li>${icon('check')}<span><a href="/industries/${i.slug}/" style="color:inherit">${esc(i.title)}</a></span></li>`)
+        .map((i) => `<li>${icon('check')}<span><a class="plainlink" href="/industries/${i.slug}/">${esc(i.title)}</a></span></li>`)
         .join('')}</ul>
     </div>
   </div>
