@@ -36,8 +36,8 @@ export const site = {
     'Jabalpur',
     'Mehsana',
   ],
-  // Form endpoint: replace with your Formspree / Web3Works ID before launch.
-  formEndpoint: 'https://formspree.io/f/REPLACE_WITH_YOUR_FORM_ID',
+  // Database-free PHP mailer included in the static deployment package.
+  formEndpoint: '/send-mail.php',
   social: [
     { label: 'LinkedIn', href: 'https://www.linkedin.com/company/trionest-spaces/', icon: 'linkedin' },
   ],

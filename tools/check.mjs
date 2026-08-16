@@ -102,7 +102,7 @@ for (const f of htmlFiles) {
 }
 
 // required root files
-for (const req of ['sitemap.xml', 'robots.txt', '404.html', '.nojekyll']) {
+for (const req of ['sitemap.xml', 'robots.txt', '404.html', '.nojekyll', 'send-mail.php']) {
   if (!existsSync(join(ROOT, req))) errors.push(`missing required file /${req}`);
 }
 

@@ -1,11 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 328 72" width="328" height="72" role="img" aria-label="TrioNest Spaces">
-  <title>TrioNest Spaces</title>
-  <g transform="translate(6 11) scale(0.52)">
-    <polygon fill="#5aa347" points="50,10 8,86 21.2,76.6 50,23.4"/>
-    <polygon fill="#b9cc33" points="50,10 92,86 78.8,76.6 50,23.4"/>
-    <polygon fill="#2e7d43" points="8,86 92,86 78.8,76.6 21.2,76.6"/>
-    <polygon fill="#478f44" points="8,86 16.8,70.2 21.2,76.6"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 104" width="420" height="104" role="img" aria-labelledby="title desc">
+  <title id="title">TrioNest Spaces</title>
+  <desc id="desc">The official TrioNest green impossible-triangle mark with the TrioNest Spaces wordmark</desc>
+  <defs>
+    <linearGradient id="lime" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#82a800"/>
+      <stop offset=".5" stop-color="#b8dc35"/>
+      <stop offset="1" stop-color="#6f8f00"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#087c18"/>
+      <stop offset="1" stop-color="#00650f"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#729400"/>
+      <stop offset="1" stop-color="#3e6500"/>
+    </linearGradient>
+  </defs>
+  <!-- Official TrioNest impossible-triangle mark, redrawn from the trionest.in brand asset. -->
+  <g transform="translate(3 4) scale(.16)">
+    <path d="M95 238 444 58l62 39-287 140 148 91v72z" fill="url(#lime)" stroke="#d6ec7c" stroke-width="3" stroke-linejoin="round"/>
+    <path d="m444 58 62 39-11 395-71 37 1-84 12-244-70 36v91L219 237l287-140z" fill="url(#edge)" opacity=".76"/>
+    <path d="M95 238 94 315l330 214 1-84-58-45v-72L219 237l148-72v72L95 238z" fill="url(#green)" stroke="#4fa73d" stroke-width="3" stroke-linejoin="round"/>
+    <path d="m219 237 148-72 70 36-70 36v91z" fill="#f2f6df"/>
+    <path d="m367 237 70-36-12 244-58-45z" fill="#007013"/>
   </g>
-  <text x="76" y="37" font-family="'Space Grotesk',Segoe UI,sans-serif" font-size="25" font-weight="700" fill="#1c2a25" letter-spacing="-0.6">TrioNest</text>
-  <text x="76" y="57" font-family="'Space Grotesk',Segoe UI,sans-serif" font-size="13" font-weight="600" fill="#2e7d43" letter-spacing="4.6">SPACES</text>
+  <g font-family="Inter,Segoe UI,Arial,sans-serif">
+    <text x="95" y="55" fill="#1c2a25" font-size="38" font-weight="700" letter-spacing="-1.2">TrioNest</text>
+    <text x="97" y="79" fill="#2e7d43" font-size="15" font-weight="700" letter-spacing="7.5">SPACES</text>
+  </g>
 </svg>

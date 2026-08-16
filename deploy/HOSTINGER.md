@@ -30,6 +30,7 @@ You have **two options**:
    ```
    public_html/
    ├── index.html          ← Homepage
+   ├── send-mail.php       ← Database-free contact form mailer
    ├── about/
    │   └── index.html
    ├── services/
@@ -132,24 +133,21 @@ node tools/optimize-images.mjs
 
 ---
 
-## Form Configuration
+## Contact Form
 
-The contact form needs a backend service. Options:
+`dist/send-mail.php` is included automatically. It validates the form, blocks the
+honeypot spam field and sends submissions directly to `spaces@trionest.in`. There is
+no database, API key or third-party form service.
 
-### Option 1: Formspree (Easiest)
+After uploading:
 
-1. Sign up at [formspree.io](https://formspree.io)
-2. Create a form and get your form ID
-3. Edit `src/data/site.mjs`:
-   ```javascript
-   formEndpoint: 'https://formspree.io/f/YOUR_FORM_ID',
-   ```
-4. Rebuild: `npm run build`
-5. Re-deploy the `dist/` folder
-
-### Option 2: Form without a service (Default)
-
-Currently, the form falls back to opening the user's email client with pre-filled data. This works but is not ideal for lead capture.
+1. Submit the form once from `https://trionest.in/contact/`.
+2. Check the Inbox and Spam folders for `spaces@trionest.in`.
+3. If no message arrives, confirm PHP mail is enabled in hPanel or contact Hostinger
+   support. The site uses the domain-aligned sender `spaces@trionest.in` and sets the
+   visitor's address only as `Reply-To` for better deliverability.
+4. Do not deploy this site only to GitHub Pages if the form must work: GitHub Pages
+   cannot execute PHP. Use Hostinger (or another PHP-capable shared host).
 
 ---
 
@@ -217,8 +215,9 @@ This is a **static site** — no database required. The build process generates 
 ### Cron Jobs (not needed)
 No scheduled tasks are required.
 
-### PHP Version (not relevant)
-This site uses no PHP. Any PHP version setting in hPanel can be left at default.
+### PHP Version
+Use PHP 8.0 or newer in hPanel. PHP is used only by `send-mail.php` for contact-form
+email delivery; there is no PHP framework, database or Composer dependency.
 
 ---
 
@@ -227,6 +226,7 @@ This site uses no PHP. Any PHP version setting in hPanel can be left at default.
 ```
 dist/                          ← Upload this folder's contents
 ├── index.html                 ← Homepage
+├── send-mail.php              ← Contact-form email delivery
 ├── 404.html                   ← Custom 404 page
 ├── robots.txt                 ← Search engine instructions
 ├── sitemap.xml                ← Site map for SEO

@@ -306,7 +306,7 @@ export const terms = page({
   <p>Information you submit through our forms must be accurate and must be information you are entitled to share. Do not submit confidential third-party material without authority. Submitting an enquiry does not create a contract; a contract arises only when a written proposal is accepted and a work order or purchase order is issued.</p>
 
   <h2>7. Third-party links and embeds</h2>
-  <p>This site may link to or embed third-party services, such as mapping, messaging or form processing. We do not control those services and are not responsible for their content, availability or privacy practices.</p>
+  <p>This site may link to or embed third-party services, such as mapping or messaging. We do not control those services and are not responsible for their content, availability or privacy practices. Contact-form submissions are sent directly to TrioNest Spaces by our hosting provider and are not stored in a website database.</p>
 
   <h2>8. Limitation of liability</h2>
   <p>To the fullest extent permitted by law, ${esc(
