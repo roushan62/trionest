@@ -1,14 +1,23 @@
 {
   "name": "trionest-spaces",
-  "version": "2.0.0",
+  "version": "1.4.0",
   "private": true,
-  "description": "TrioNest Spaces static website",
+  "description": "TrioNest Spaces — static corporate website (HTML/CSS/vanilla JS, zero runtime dependencies)",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "check": "node build.mjs"
+    "serve": "node build.mjs && node tools/serve.mjs",
+    "dev": "node tools/serve.mjs",
+    "check": "node build.mjs && node tools/check.mjs",
+    "smoke": "node build.mjs && node tools/smoke.mjs",
+    "audit": "node build.mjs && node tools/audit.mjs",
+    "qa": "node build.mjs && node tools/check.mjs && node tools/audit.mjs && node tools/smoke.mjs",
+    "deploy": "npm run build && npx vercel --prod"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.1"
   }
 }
