@@ -21,7 +21,9 @@ included only to deliver contact-form submissions to `spaces@trionest.in`.
 npm run build            # build the static site into dist/ (minifies CSS too)
 npm run serve            # build + preview at http://localhost:4321
 npm run check            # build + run the QA checker (links | alt | meta | schema | headings | webp)
+npm run audit            # build + deep DOM/CSS audit (nav, drawer, ARIA, ids, labels, responsive rules)
 npm run smoke            # build + DOM smoke test of the JS enhancement layer (jsdom)
+npm run qa               # build + check + audit + smoke — run this before every deploy
 npm run prepare-images   # resize + recompress JPEGs and generate WebP twins (needs ImageMagick)
 npm run logos            # render SVG client logos to PNG previews in tmp/ for review
 npm run images           # regenerate brand assets and photo placeholders
@@ -35,6 +37,38 @@ There are **no npm dependencies to install** for the build itself. `npm run buil
 clean checkout. `npm run smoke` needs the `jsdom` devDependency (`npm i`).
 
 ---
+
+## Cross-device fixes (v1.3)
+
+The header, navigation and every responsive grid were rebuilt to remove the layout
+glitches that showed up on phones and on wide desktops.
+
+* **Mobile menu no longer opens half way.** The drawer used to be a `position: fixed`
+  panel *inside* `<header class="head">` — but `.head` applies `backdrop-filter`, and a
+  backdrop-filter makes an element the containing block for its fixed descendants. The
+  panel was therefore clipped to the header box. The drawer is now rendered at body level
+  (`#mobile-nav`, see `drawerMarkup()` in `src/lib/layout.mjs`) as a full-height sheet with
+  a scrim, focus trap, Escape-to-close, and auto-close on navigate or breakpoint change.
+* **All 7 nav sections + 21 sub-pages are reachable on every device.** Each dropdown now
+  also carries an "All <section>" link so the parent index page is never orphaned, and the
+  right-most dropdowns flip their alignment so they cannot spill off-screen.
+* **Desktop dropdowns work on click and keyboard**, not hover only.
+* **`overflow-x: clip` instead of `hidden` on `<body>`** — `hidden` turns the body into a
+  scroll container, which silently breaks `position: sticky` on the header.
+* **Every multi-column grid uses `minmax(0, 1fr)`.** `1fr` defaults to `min-content`
+  minimum, so any long word or wide image pushed columns past the viewport. This was the
+  root cause of the "formatting breaks" reports on both phone and desktop.
+* **Anchor links clear the sticky header** (`scroll-padding-top` + JS offset), and
+  `content-visibility: auto` was removed from `.sec` because it made anchor targets and
+  scroll restoration land in the wrong place.
+* **`[hidden] { display: none !important }`** — without it the project filter could not
+  hide flex cards, so filtering appeared to do nothing.
+* Stat figures render server-side (correct with JS off), stacked key/value tables below
+  560px, 16px form inputs on mobile (no iOS zoom-on-focus), 44–48px touch targets,
+  safe-area insets for the floating buttons, and a scroll-reveal failsafe so content can
+  never stay invisible.
+* **`npm run qa`** runs the full gate: build → link/meta check → deep DOM + CSS audit
+  (`tools/audit.mjs`, 75 pages) → JS smoke test.
 
 ## Redesign layer (v1.2)
 

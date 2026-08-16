@@ -214,7 +214,7 @@ ${testimonialSection('Client feedback')}
     ${zonesWithLocations
       .map(
         ({ zone, items }) => `<div class="mb-1">
-      <p class="vcard__kicker" style="margin-bottom:.55rem">${esc(zone)} India</p>
+      <p class="vcard__kicker cov__zone">${esc(zone)} India</p>
       <div class="cov__chips">
         ${items
           .map(

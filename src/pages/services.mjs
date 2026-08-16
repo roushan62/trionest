@@ -132,7 +132,7 @@ export const servicePage = (s) => {
     </div>
   </div>
   <div>
-    <div class="pcard" style="display:block">
+    <div class="pcard pcard--static">
       <div class="pcard__media">${img(`/assets/img/svc-${s.slug}.jpg`, `${s.title} work by TrioNest Spaces`, {
         w: 800,
         h: 500,

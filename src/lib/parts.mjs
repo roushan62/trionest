@@ -24,9 +24,11 @@ export const statBar = () => `<section class="stats" aria-label="Company at a gl
     ${site.stats
       .map((s) => {
         const m = s.value.match(/^(\d+)(.*)$/);
+        /* The real figure is rendered server-side, so the number is correct even
+           if JavaScript never runs; the counter only animates up to it. */
         return `<div class="stat"><div class="stat__v"${
           m ? ` data-count="${m[1]}" data-suffix="${esc(m[2])}"` : ''
-        }>${m ? `<span class="stat__num">0</span>${esc(m[2])}` : esc(s.value)}</div><div class="stat__l">${esc(
+        }>${m ? `<span class="stat__num">${esc(m[1])}</span>${esc(m[2])}` : esc(s.value)}</div><div class="stat__l">${esc(
           s.label,
         )}</div></div>`;
       })
@@ -230,7 +232,7 @@ export const enquiryForm = ({ compact = false, subject = 'Website enquiry', id =
   <div class="form__status" role="status" aria-live="polite"></div>
   <p class="form__note">Have a BOQ, floor plan or tender document? Email it to <a href="mailto:${
     site.email
-  }" style="color:var(--accent)">${esc(site.email)}</a> quoting your company name. By submitting you agree to be contacted by ${esc(
+  }" class="ilink">${esc(site.email)}</a> quoting your company name. By submitting you agree to be contacted by ${esc(
   site.name,
-)} about your enquiry. See our <a href="/privacy-policy/" style="color:var(--accent)">privacy policy</a>.</p>
+)} about your enquiry. See our <a class="ilink" href="/privacy-policy/">privacy policy</a>.</p>
 </form>`;
