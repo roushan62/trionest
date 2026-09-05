@@ -346,6 +346,59 @@ export const locations = [
   },
 ];
 
+/* Dedicated Delhi-NCR city pages — the four highest-intent local markets.
+   Corridor and hub names are public market geography. The cost figures are
+   published 2026 NCR market benchmarks, always presented as "typical market
+   ranges" — never as TrioNest rates. */
+export const ncrCities = [
+  {
+    slug: 'gurugram',
+    name: 'Gurugram',
+    state: 'Haryana',
+    kind: 'City',
+    zone: 'North',
+    hasActiveSites: true,
+    corridors: [
+      'DLF Cyber City',
+      'Golf Course Road',
+      'Udyog Vihar',
+      'SOZ',
+      'Sikanderpur',
+      'Manesar',
+    ],
+    sectors: ['corporate-offices', 'bfsi-banking', 'co-working', 'industrial'],
+    note: 'North India’s largest corporate office corridor. The Grade-A towers of Cyber City and Golf Course Road carry BFSI, technology and consulting head offices, while Udyog Vihar and the Manesar belt drive electrical, HVAC and industrial scope. Office fit-outs here run to strict landlord and building-management specifications — fit-out drawing approvals, fire NOC and electrical compliance are worked as part of our scope, not as a client chore.',
+    approvals: 'Building-management fit-out approvals, fire NOC, electrical and low-current compliance documentation for Cyber City, Golf Course Road, Udyog Vihar and surrounding Grade-A office parks.',
+    costNote: 'In the Gurugram Grade-A tower market, 2026 benchmarks put typical office fit-out budgets at roughly ₹800–1,200 per sq ft for a functional fit-out, ₹1,200–2,500 for a branded mid-range floor, and ₹2,500–5,000+ for headquarters-grade interiors with bespoke joinery. Our survey and fixed-cost proposal map your brief onto that range before any commitment.',
+  },
+  {
+    slug: 'noida',
+    name: 'Noida',
+    state: 'Uttar Pradesh',
+    kind: 'City',
+    zone: 'North',
+    hasActiveSites: true,
+    corridors: ['Sector 62', 'Sector 63', 'Noida Expressway', 'Knowledge Park', 'Greater Noida', 'NSEZ'],
+    sectors: ['corporate-offices', 'co-working', 'bfsi-banking'],
+    note: 'Noida’s Sector 62–63 IT hub and the Expressway corridor anchor India’s largest cluster of technology and BPM campuses. Fit-outs here are bought by facilities and admin teams who need server rooms, structured cabling and HVAC sized for dense workstations — and by operators rolling out multi-floor programmes across Noida and Greater Noida. We handle NOIDA Authority and GNIDA fit-out documentation, fire NOC and electrical board compliance as part of the turnkey scope.',
+    approvals: 'NOIDA Authority / GNIDA fit-out documentation, fire NOC, electrical board compliance and data-centre room preparation across Noida, Greater Noida and the Expressway corridor.',
+    costNote: 'Noida’s 2026 market benchmarks for office interiors run roughly ₹800–1,200 per sq ft for essential fit-outs, ₹1,200–2,500 for branded corporate floors with proper MEP, and ₹2,500–5,000+ for premium or client-facing spaces. A typical Noida office fit-out takes 6–12 weeks depending on area and MEP depth.',
+  },
+  {
+    slug: 'ghaziabad',
+    name: 'Ghaziabad',
+    state: 'Uttar Pradesh',
+    kind: 'City',
+    zone: 'North',
+    hasActiveSites: true,
+    corridors: ['Imprial City', 'Crossings Republic', 'Indirapuram', 'Raj Nagar', 'Knowledge Park', 'Sector 27'],
+    sectors: ['corporate-offices', 'retail-showrooms', 'bfsi-banking', 'industrial'],
+    note: 'Ghaziabad is the Yamuna’s north-bank commercial engine — Imprial City and Crossings Republic concentrate corporate floors and showrooms, Indirapuram adds an established IT and services presence, and the industrial belt around the city drives plant electrical and HVAC work. For brands expanding out of central Noida or Delhi, Ghaziabad offers better floor economics — our surveys and fixed-cost proposals are built to prove that on your own numbers.',
+    approvals: 'Municipal and society/building fit-out approvals, fire NOC and electrical compliance for offices, showrooms and industrial units across Ghaziabad.',
+    costNote: 'Ghaziabad fit-out budgets typically run below the Cyber City or Sector 62 benchmark at similar specification — commonly ₹800–2,500 per sq ft for corporate and retail fit-outs in 2026, with premium builds above that. We price against a frozen BOQ, so the proposal does not move after PO.',
+  },
+];
+
 export const zonesWithLocations = zones.map((z) => ({
   zone: z,
   items: locations.filter((l) => l.zone === z),

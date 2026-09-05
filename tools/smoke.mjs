@@ -32,6 +32,10 @@ w.IntersectionObserver ||= class {
   disconnect() {}
 };
 w.requestAnimationFrame ||= (cb) => setTimeout(() => cb(Date.now()), 16);
+/* jsdom does not implement media playback — stub it so the hero-video layer
+   boots exactly as it does in a real browser. */
+w.HTMLMediaElement.prototype.play = function () { return Promise.resolve(); };
+w.HTMLMediaElement.prototype.pause = function () {};
 
 try {
   w.eval(js);

@@ -55,6 +55,10 @@ function makeDom(html, url) {
   };
   w.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 0);
   w.scrollTo = () => {};
+  /* jsdom does not implement media playback — stub it so the hero-video layer
+     boots exactly as it does in a real browser. */
+  w.HTMLMediaElement.prototype.play = function () { return Promise.resolve(); };
+  w.HTMLMediaElement.prototype.pause = function () {};
   return { dom, w, jsErrors };
 }
 

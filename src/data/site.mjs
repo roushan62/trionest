@@ -29,6 +29,9 @@ export const site = {
   ],
   cities: [
     'Delhi-NCR',
+    'Gurugram',
+    'Noida',
+    'Ghaziabad',
     'Lucknow',
     'Patna',
     'Kolkata',
@@ -36,6 +39,13 @@ export const site = {
     'Jabalpur',
     'Mehsana',
   ],
+  /* Hero background video.
+     '' = use the free Pexels CDN clip referenced in src/pages/home.mjs
+     (commercial licence, no attribution required).
+     For a fully self-hosted loop: put an MP4 in src/assets/media/hero-loop.mp4
+     (keep it under ~8 MB, 1080p, 10–20 s, no audio) and set the path here —
+     the build copies it and the page will stream it from your own origin. */
+  heroVideo: '',
   // Contact form endpoint. This site runs on Vercel (static hosting), so a PHP
   // mailer cannot execute. Leave '' and the form opens a pre-filled email to
   // spaces@trionest.in (nothing is lost). To submit over HTTPS instead, put a

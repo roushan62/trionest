@@ -88,19 +88,50 @@ const jsonld = [
 const svcIcon = { 'civil-interiors': 'layers', electrical: 'bolt', hvac: 'wind', 'amc-fms': 'tools' };
 const whyIcon = ['shield', 'users', 'clock', 'check', 'tools', 'globe'];
 
+/* Hero background video. Default: free Pexels loop (commercial licence, no
+   attribution required). A self-hosted file set as `heroVideo` in
+   src/data/site.mjs wins, so the site can run with zero external requests. */
+const PEXELS_HERO_LOOP = 'https://videos.pexels.com/video-files/8347237/8347237-uhd_2560_1440_25fps.mp4';
+const heroVideoSrc = site.heroVideo || PEXELS_HERO_LOOP;
+const heroExtraHead = site.heroVideo ? '' : '<link rel="preconnect" href="https://videos.pexels.com" crossorigin>';
+
+/* The 3D office renders double as (a) the hero crossfade backdrop + video
+   poster, and (b) the design-showcase gallery further down the page. */
+const renderSlides = ['hero-3d-1', 'hero-3d-2', 'hero-3d-3', 'hero-3d-4'];
+const renders = [
+  { file: 'hero-3d-1', cap: 'Open-plan workspace — concept 3D, pre-BOQ sign-off' },
+  { file: 'hero-3d-2', cap: 'Executive boardroom — backlit onyx &amp; joinery render' },
+  { file: 'hero-3d-3', cap: 'Reception — 3D fluted-panel feature wall visualisation' },
+  { file: 'hero-3d-4', cap: 'Collaboration lounge — biophilic breakout 3D' },
+];
+
 const body = `
 <section class="hero">
-  <div class="hero__bg">${img('/assets/img/hero-office.jpg', 'Corporate workspace delivered by TrioNest Spaces', {
-    w: 2000,
-    h: 1250,
-    eager: true,
-  })}</div>
-  <div class="hero__orb hero__orb--a" aria-hidden="true"></div>
-  <div class="hero__orb hero__orb--b" aria-hidden="true"></div>
+  <div class="hero__media" aria-hidden="true">
+    <div class="hero__slides">
+      ${renderSlides
+        .map(
+          (f, i) =>
+            img(`/assets/img/${f}.jpg`, '', {
+              w: 1672,
+              h: 941,
+              cls: 'hero__slide',
+              eager: i === 0,
+            }),
+        )
+        .join('')}
+    </div>
+    <video class="hero__vid" autoplay muted loop playsinline preload="metadata" poster="/assets/img/hero-3d-1.webp">
+      <source src="${heroVideoSrc}" type="video/mp4">
+    </video>
+    <div class="hero__orb hero__orb--a"></div>
+    <div class="hero__orb hero__orb--b"></div>
+    <div class="hero__scrim"></div>
+  </div>
   <div class="wrap hero__inner">
-    <span class="kicker" data-reveal style="--rd:0ms">Corporate Interiors · Electrical · HVAC</span>
+    <span class="kicker" data-reveal style="--rd:0ms">Corporate Interiors · Electrical · HVAC — Delhi NCR → PAN India</span>
     <h1 data-reveal style="--rd:80ms">One partner. Three <em>disciplines</em>.</h1>
-    <p class="hero__sub" data-reveal style="--rd:160ms">Design-driven corporate interiors, end-to-end electrical contracting and PMBOK-led HVAC engineering — delivered as a single, accountable handover.</p>
+    <p class="hero__sub" data-reveal style="--rd:160ms">Premium corporate interiors, end-to-end electrical contracting and PMBOK-led HVAC engineering — designed, built and handed over by a single accountable team, from Cyber City to Sector 62.</p>
     <div class="hero__cta" data-reveal style="--rd:240ms">
       <a class="btn btn--accent btn--lg" href="/contact/">Start your project ${icon('arrow')}</a>
       <a class="btn btn--ghost btn--lg" href="/projects/">See our projects</a>
@@ -109,16 +140,19 @@ const body = `
       <li class="pill">${icon('layers')} Civil &amp; Interiors</li>
       <li class="pill">${icon('bolt')} Electrical</li>
       <li class="pill">${icon('wind')} HVAC</li>
+      <li class="pill">${icon('shield')} 100+ projects delivered</li>
     </ul>
   </div>
   <div class="hero__ticker" aria-hidden="true">
     <div class="ticker__track">
       <span>One partner</span><i></i><span>One contract</span><i></i><span>One handover</span><i></i>
-      <span>Delhi-NCR</span><i></i><span>Lucknow</span><i></i><span>Patna</span><i></i>
-      <span>Kolkata</span><i></i><span>Gwalior</span><i></i><span>Jabalpur</span><i></i><span>Mehsana</span><i></i>
+      <span>Delhi-NCR</span><i></i><span>Gurugram</span><i></i><span>Noida</span><i></i><span>Ghaziabad</span><i></i>
+      <span>Lucknow</span><i></i><span>Patna</span><i></i><span>Kolkata</span><i></i>
+      <span>Gwalior</span><i></i><span>Jabalpur</span><i></i><span>Mehsana</span><i></i>
       <span>One partner</span><i></i><span>One contract</span><i></i><span>One handover</span><i></i>
-      <span>Delhi-NCR</span><i></i><span>Lucknow</span><i></i><span>Patna</span><i></i>
-      <span>Kolkata</span><i></i><span>Gwalior</span><i></i><span>Jabalpur</span><i></i><span>Mehsana</span><i></i>
+      <span>Delhi-NCR</span><i></i><span>Gurugram</span><i></i><span>Noida</span><i></i><span>Ghaziabad</span><i></i>
+      <span>Lucknow</span><i></i><span>Patna</span><i></i><span>Kolkata</span><i></i>
+      <span>Gwalior</span><i></i><span>Jabalpur</span><i></i><span>Mehsana</span><i></i>
     </div>
   </div>
 </section>
@@ -154,6 +188,29 @@ ${logoStrip()}
         )
         .join('')}
     </div>
+  </div>
+</section>
+
+<section class="sec sec--alt">
+  <div class="wrap">
+    <div class="sec__head sec__head--split">
+      <div>
+        <span class="kicker">Design &amp; 3D visualisation</span>
+        <h2>Every floor starts as a <em>3D you can walk through.</em></h2>
+      </div>
+      <p>Concept and 3D views are signed off before the BOQ is priced, and the working drawing set — with electrical and HVAC design coordinated onto the same ceiling plan — is built off that approved set. What you sign is what gets built.</p>
+    </div>
+    <div class="gallery">
+      ${renders
+        .map(
+          (r) => `<figure>${img(`/assets/img/${r.file}.jpg`, r.cap.replace(/&amp;/g, '&'), {
+            w: 1672,
+            h: 941,
+          })}<figcaption>${r.cap}</figcaption></figure>`,
+        )
+        .join('')}
+    </div>
+    <p class="mt-2"><a class="tlink" href="/services/civil-interiors/">See the full design &amp; fit-out scope ${icon('arrow')}</a></p>
   </div>
 </section>
 
@@ -266,9 +323,10 @@ ${testimonialSection('Client feedback')}
 `;
 
 export default page({
-  title: 'TrioNest Spaces | Interiors, Electrical & HVAC — PAN India',
-  desc: 'Corporate interiors, electrical contracting and HVAC engineering under one contract — delivered PAN-India from Delhi-NCR. 100+ projects, 100+ HVAC installations.',
+  title: 'TrioNest Spaces | Office Fit-Out, Electrical & HVAC — Delhi NCR',
+  desc: 'Premium corporate office fit-outs in Gurugram, Noida, Ghaziabad & Delhi-NCR — interiors, electrical and HVAC under one fixed-cost contract. 100+ projects, PAN-India delivery.',
   path: '/',
   body,
   jsonld,
+  extraHead: `${heroExtraHead}\n<link rel="preload" as="image" href="/assets/img/hero-3d-1.webp" fetchpriority="high">`,
 });

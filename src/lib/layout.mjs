@@ -1,4 +1,5 @@
 import { site, nav } from '../data/site.mjs';
+import { ncrCities } from '../data/locations.mjs';
 
 export const esc = (s = '') =>
   String(s)
@@ -239,7 +240,10 @@ const footer = () => `<footer class="foot">
       <h2 class="foot__h">Coverage</h2>
       <ul>
         <li><a href="/locations/"><strong>PAN-India — all states</strong></a></li>
-        <li><a href="/locations/delhi/">Delhi-NCR</a></li>
+        ${ncrCities
+          .map((c) => `<li><a href="/locations/${c.slug}/">${esc(c.name)}</a></li>`)
+          .join('')}
+        <li><a href="/locations/delhi/">Delhi</a></li>
         <li><a href="/locations/maharashtra/">Maharashtra</a></li>
         <li><a href="/locations/karnataka/">Karnataka</a></li>
         <li><a href="/locations/telangana/">Telangana</a></li>
@@ -285,6 +289,7 @@ export function page({
   bodyClass = '',
   noindex = false,
   ogImage = null,
+  extraHead = '',
 }) {
   const canonical = site.url + path;
   const og = ogImage ? site.url + ogImage : `${site.url}/assets/brand/og-default.png`;
@@ -318,7 +323,7 @@ export function page({
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${canonical}">
 ${noindex ? '<meta name="robots" content="noindex,follow">' : '<meta name="robots" content="index,follow">'}
-<meta name="theme-color" content="#004286">
+<meta name="theme-color" content="#06241a">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${esc(site.name)}">
 <meta property="og:title" content="${esc(title)}">
@@ -345,9 +350,9 @@ ${noindex ? '<meta name="robots" content="noindex,follow">' : '<meta name="robot
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap"></noscript>
-<link rel="preload" as="image" href="/assets/brand/logo.png" fetchpriority="high">
 <link rel="preload" as="style" href="/assets/css/style.css">
 <link rel="stylesheet" href="/assets/css/style.css">
+${extraHead}
 ${ld}
 </head>
 <body class="${bodyClass}">
