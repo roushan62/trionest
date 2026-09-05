@@ -11,8 +11,7 @@
     "check": "node build.mjs && node tools/check.mjs",
     "smoke": "node build.mjs && node tools/smoke.mjs",
     "audit": "node build.mjs && node tools/audit.mjs",
-    "qa": "node build.mjs && node tools/check.mjs && node tools/audit.mjs && node tools/smoke.mjs",
-    "deploy": "npm run build && npx vercel --prod"
+    "qa": "node build.mjs && node tools/check.mjs && node tools/audit.mjs && node tools/smoke.mjs"
   },
   "engines": {
     "node": ">=18"

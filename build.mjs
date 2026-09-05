@@ -16,7 +16,7 @@ import { services } from './src/data/services.mjs';
 import { industries } from './src/data/industries.mjs';
 import { projects } from './src/data/projects.mjs';
 import { posts } from './src/data/blog.mjs';
-import { locations } from './src/data/locations.mjs';
+import { locations, ncrCities } from './src/data/locations.mjs';
 
 import home from './src/pages/home.mjs';
 import { about, process as processPage, qualitySafety, certifications, team, clients, companyProfile, careers } from './src/pages/company.mjs';
@@ -24,7 +24,7 @@ import { servicesIndex, servicePage } from './src/pages/services.mjs';
 import { industriesIndex, industryPage } from './src/pages/industries.mjs';
 import { projectsIndex, projectPage } from './src/pages/projects.mjs';
 import { blogIndex, blogPost, contact, privacy, terms, notFound } from './src/pages/misc.mjs';
-import { locationsIndex, locationPage } from './src/pages/locations.mjs';
+import { locationsIndex, locationPage, cityPage } from './src/pages/locations.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DIST = join(__dirname, 'dist');
@@ -69,6 +69,7 @@ write('/industries/', industriesIndex);
 industries.forEach((i) => write(`/industries/${i.slug}/`, industryPage(i)));
 write('/locations/', locationsIndex);
 locations.forEach((l) => write(`/locations/${l.slug}/`, locationPage(l)));
+ncrCities.forEach((c) => write(`/locations/${c.slug}/`, cityPage(c)));
 write('/projects/', projectsIndex);
 projects.forEach((p) => write(`/projects/${p.slug}/`, projectPage(p, projects)));
 write('/process/', processPage);
@@ -114,24 +115,31 @@ const jsFile = `main.${digest(jsSrc)}.js`;
 writeFileSync(join(DIST, 'assets/js', jsFile), jsSrc);
 rmSync(join(DIST, 'assets/js/main.js'));
 
-/* Point every generated page at the hashed CSS/JS files */
+/* Point every generated page at the hashed CSS/JS files AND rewrite
+   root-absolute internal links (href/src/poster="/…") to RELATIVE paths so
+   the same dist/ runs on GitHub Pages at any sub-path
+   (https://user.github.io/repo/) exactly as it does at a domain root.
+   Protocol-relative ("//…") and full-URL references are left untouched;
+   JSON-LD / OG / canonical values are full URLs and are unaffected. */
 function rewritePages(dir) {
   for (const f of readdirSync(dir)) {
     const p = join(dir, f);
     if (statSync(p).isDirectory()) rewritePages(p);
     else if (f.endsWith('.html')) {
-      const html = readFileSync(p, 'utf8');
-      writeFileSync(
-        p,
-        html
-          .replaceAll('/assets/css/style.css', `/assets/css/${cssFile}`)
-          .replaceAll('/assets/js/main.js', `/assets/js/${jsFile}`),
+      const depth = p.slice(DIST.length + 1).split('/').length - 1; // 0 = dist root
+      const html = readFileSync(p, 'utf8')
+        .replaceAll('/assets/css/style.css', `/assets/css/${cssFile}`)
+        .replaceAll('/assets/js/main.js', `/assets/js/${jsFile}`);
+      const relativized = html.replace(
+        /(href|src|poster)="\/(?!\/)([^"]*)"/g,
+        (m, attr, rest) => `${attr}="${depth ? '../'.repeat(depth) + rest : rest}"`,
       );
+      writeFileSync(p, relativized);
     }
   }
 }
 rewritePages(DIST);
-console.log(`✓ assets fingerprinted: ${cssFile}, ${jsFile}`);
+console.log(`✓ assets fingerprinted + links relativised for GitHub Pages: ${cssFile}, ${jsFile}`);
 
 /* ---------------------------------------------------------------- sitemap */
 const today = new Date().toISOString().slice(0, 10);
@@ -174,14 +182,16 @@ writeFileSync(
       name: site.name,
       short_name: 'TrioNest',
       description: site.shortDesc,
-      start_url: '/',
+      /* relative URLs — manifest paths resolve against the manifest's own URL,
+         so this works at a domain root and at any GitHub Pages sub-path */
+      start_url: './',
       display: 'standalone',
-      background_color: '#ffffff',
-      theme_color: '#004286',
+      background_color: '#f6faf7',
+      theme_color: '#06241a',
       icons: [
-        { src: '/assets/brand/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-        { src: '/assets/brand/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-        { src: '/assets/brand/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+        { src: 'assets/brand/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: 'assets/brand/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: 'assets/brand/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
       ],
     },
     null,

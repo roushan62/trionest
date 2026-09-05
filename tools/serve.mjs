@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Minimal static server for local preview of dist/. Mirrors Hostinger behaviour:
+/* Minimal static server for local preview of dist/. Serves dist/ with GitHub-Pages-style routing:
    /path/ -> /path/index.html, unknown -> 404.html */
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';

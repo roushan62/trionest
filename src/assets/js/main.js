@@ -516,31 +516,32 @@
     Array.prototype.forEach.call(counters, function (c) { countObs.observe(c); });
   }
 
-  /* ---------- cursor glow (desktop pointers only) ---------- */
-  if (window.matchMedia('(pointer: fine)').matches && !reduced) {
-    var glow = document.createElement('div');
-    glow.className = 'glow';
-    glow.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(glow);
-    var gx = window.innerWidth / 2, gy = window.innerHeight / 2;
-    var tx = gx, ty = gy, gTick = false, gOn = false;
-    document.addEventListener(
-      'pointermove',
-      function (e) {
-        tx = e.clientX; ty = e.clientY;
-        if (!gOn) { gOn = true; glow.style.opacity = '1'; }
-        if (!gTick) {
-          gTick = true;
-          requestAnimationFrame(function () {
-            gTick = false;
-            gx += (tx - gx) * 0.16;
-            gy += (ty - gy) * 0.16;
-            glow.style.transform = 'translate(' + (gx - 300) + 'px,' + (gy - 300) + 'px)';
+  /* ---------- hero background video ----------
+     The 3D-render slideshow underneath is the fallback: the video only fades
+     in once it actually starts playing, and it pauses off-screen so a visitor
+     who scrolls past the hero never keeps streaming it. */
+  var heroVid = document.querySelector('.hero__vid');
+  if (heroVid) {
+    var heroSection = heroVid.closest('.hero');
+    heroVid.addEventListener('playing', function () {
+      if (heroSection) heroSection.classList.add('has-video');
+    }, passiveArg);
+    if ('IntersectionObserver' in window) {
+      var vidObs = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              var p = heroVid.play();
+              if (p && p.catch) p.catch(function () {});
+            } else {
+              heroVid.pause();
+            }
           });
-        }
-      },
-      passiveArg,
-    );
+        },
+        { rootMargin: '120px 0px' },
+      );
+      vidObs.observe(heroVid);
+    }
   }
 
   /* ---------- subtle tilt on project / office cards ---------- */

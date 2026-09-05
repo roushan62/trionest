@@ -51,13 +51,23 @@ for (const f of htmlFiles) {
   const h1s = html.match(/<h1[\s>]/g) || [];
   if (h1s.length !== 1) errors.push(`${page}: ${h1s.length} <h1> elements (expected exactly 1)`);
 
+  /* Links are emitted RELATIVE (GitHub Pages friendly), so every reference is
+     resolved against this page's own URL before being checked on disk. */
+  const baseUrl = `https://check.local${page}`; // e.g. /about/index.html
+  const resolvePath = (ref) => {
+    try { return new URL(ref, baseUrl).pathname; } catch { return null; }
+  };
+
   // images: alt + file exists
   const imgs = html.match(/<img\b[^>]*>/g) || [];
   for (const tag of imgs) {
     if (!/\balt=/.test(tag)) errors.push(`${page}: <img> without alt — ${tag.slice(0, 90)}`);
     const src = (tag.match(/\bsrc="([^"]+)"/) || [])[1];
-    if (src && src.startsWith('/') && !existsSync(join(ROOT, src))) {
-      errors.push(`${page}: missing image asset ${src}`);
+    if (src && !/^(https?:|data:)/.test(src)) {
+      const p = resolvePath(src);
+      if (p && !existsSync(join(ROOT, decodeURIComponent(p)))) {
+        errors.push(`${page}: missing image asset ${src}`);
+      }
     }
     if (!/\bwidth=/.test(tag) || !/\bheight=/.test(tag)) {
       warnings.push(`${page}: <img> without width/height (CLS risk) — ${(src || '').slice(0, 60)}`);
@@ -65,13 +75,15 @@ for (const f of htmlFiles) {
   }
 
   // stylesheet/script assets
-  for (const m of html.matchAll(/\b(?:href|src)="(\/assets\/[^"]+)"/g)) {
-    if (!existsSync(join(ROOT, m[1]))) errors.push(`${page}: missing asset ${m[1]}`);
+  for (const m of html.matchAll(/\b(?:href|src)="((?:\.\.\/)*assets\/[^"]+)"/g)) {
+    const p = resolvePath(m[1]);
+    if (p && !existsSync(join(ROOT, decodeURIComponent(p)))) errors.push(`${page}: missing asset ${m[1]}`);
   }
 
   // <source srcset> assets (WebP twins)
-  for (const m of html.matchAll(/\bsrcset="(\/assets\/[^"\s]+)"/g)) {
-    if (!existsSync(join(ROOT, m[1]))) errors.push(`${page}: missing srcset asset ${m[1]}`);
+  for (const m of html.matchAll(/\bsrcset="((?:\.\.\/)*assets\/[^"\s]+)"/g)) {
+    const p = resolvePath(m[1]);
+    if (p && !existsSync(join(ROOT, decodeURIComponent(p)))) errors.push(`${page}: missing srcset asset ${m[1]}`);
   }
 
   // internal links resolve
@@ -81,19 +93,20 @@ for (const f of htmlFiles) {
     if (href === '#' ) { errors.push(`${page}: dead anchor href="#"`); continue; }
     const clean = href.split('#')[0].split('?')[0];
     if (!clean) continue;
-    if (!clean.startsWith('/')) { warnings.push(`${page}: relative link ${href}`); continue; }
-    if (clean.startsWith('/assets/')) {
-      if (!existsSync(join(ROOT, clean))) {
+    const targetPath = resolvePath(clean);
+    if (!targetPath) continue;
+    if (targetPath.startsWith('/assets/')) {
+      if (!existsSync(join(ROOT, decodeURIComponent(targetPath)))) {
         // docs (PDF) are expected to be added later
-        if (clean.startsWith('/assets/docs/')) warnings.push(`${page}: document not yet uploaded ${clean}`);
-        else errors.push(`${page}: missing asset ${clean}`);
+        if (targetPath.startsWith('/assets/docs/')) warnings.push(`${page}: document not yet uploaded ${targetPath}`);
+        else errors.push(`${page}: missing asset ${targetPath}`);
       }
       continue;
     }
     // Root-level static files (site.webmanifest, robots.txt, sitemap.xml …)
-    const target = /\.[a-z0-9]+$/i.test(clean)
-      ? join(ROOT, clean)
-      : join(ROOT, clean, 'index.html');
+    const target = /\.[a-z0-9]+$/i.test(targetPath)
+      ? join(ROOT, decodeURIComponent(targetPath))
+      : join(ROOT, decodeURIComponent(targetPath), 'index.html');
     if (!existsSync(target)) errors.push(`${page}: broken internal link ${href}`);
   }
 
